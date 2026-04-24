@@ -6,21 +6,20 @@ package org.eolang.wpa;
 
 import com.github.lombrozo.xnav.Xnav;
 import com.jcabi.xml.XML;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.cactoos.list.ListOf;
 
 /**
- * Lint that ignores linting if {@code +unlint} meta is present.
+ * Internal helper that applies {@code +unlint} meta filtering to a single
+ * defect discovered in the given XMIR.
  *
  * @since 0.0.1
  */
-final class LtUnlint implements Lint<XML> {
+final class LtUnlint {
 
     /**
      * Line number to unlint.
@@ -28,39 +27,34 @@ final class LtUnlint implements Lint<XML> {
     private static final Pattern LINE_NUMBER = Pattern.compile(".*:\\d+$");
 
     /**
-     * The original lint.
+     * The defect to filter.
      */
-    private final Lint<XML> origin;
+    private final Defect defect;
 
     /**
      * Ctor.
-     * @param lint The lint to decorate
+     * @param dft The defect to filter
      */
-    LtUnlint(final Lint<XML> lint) {
-        this.origin = lint;
+    LtUnlint(final Defect dft) {
+        this.defect = dft;
     }
 
-    @Override
-    public String name() {
-        return this.origin.name();
-    }
-
-    @Override
-    public Collection<Defect> defects(final XML xmir) throws IOException {
+    /**
+     * Return the defect unless it is suppressed by {@code +unlint} meta in the
+     * given XMIR.
+     * @param xmir The XMIR that owns the defect
+     * @return Defects after filtering (zero or one)
+     */
+    Collection<Defect> defects(final XML xmir) {
         final Collection<Defect> defects = new ArrayList<>(0);
-        final String lname = this.origin.name();
-        final Collection<Defect> found = this.origin.defects(xmir);
-        final List<Integer> problematic = found.stream()
-            .filter(defect -> defect.rule().equals(lname))
-            .map(Defect::line)
-            .distinct()
-            .collect(Collectors.toList());
+        final String lname = this.defect.rule();
+        final List<Integer> problematic = new ListOf<>(this.defect.line());
         final List<String> granular = new Xnav(xmir.inner()).path(
             String.format(
                 "/object/metas/meta[head='unlint' and (tail='%s' or starts-with(tail, '%s:'))]/tail",
                 lname, lname
             )
-        ).map(xnav -> xnav.text().get()).collect(Collectors.toList());
+        ).map(xnav -> xnav.text().get()).collect(java.util.stream.Collectors.toList());
         final boolean global = !granular.isEmpty();
         final AtomicBoolean added = new AtomicBoolean(false);
         granular.forEach(
@@ -69,9 +63,7 @@ final class LtUnlint implements Lint<XML> {
                     problematic.removeIf(new UnlintInRange(unlint));
                 } else if (LtUnlint.LINE_NUMBER.matcher(unlint).matches()) {
                     final List<String> split = new ListOf<>(unlint.split(":"));
-                    final int lineno = Integer.parseInt(
-                        split.get(1)
-                    );
+                    final int lineno = Integer.parseInt(split.get(1));
                     problematic.removeIf(line -> line == lineno);
                 } else {
                     problematic.clear();
@@ -79,24 +71,16 @@ final class LtUnlint implements Lint<XML> {
             }
         );
         problematic.forEach(
-            line -> found.forEach(
-                defect -> {
-                    if (line != 0 && defect.line() == line) {
-                        defects.add(defect);
-                        added.set(true);
-                    }
+            line -> {
+                if (line != 0 && this.defect.line() == line) {
+                    defects.add(this.defect);
+                    added.set(true);
                 }
-            )
+            }
         );
         if (!added.get() && !global) {
-            defects.addAll(found);
+            defects.add(this.defect);
         }
         return defects;
     }
-
-    @Override
-    public String motive() throws IOException {
-        return this.origin.motive();
-    }
-
 }

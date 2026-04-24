@@ -41,7 +41,7 @@ public final class Program {
     /**
      * Collection of WPA lints, preloaded on JVM start.
      */
-    private static final Iterable<Lint<Map<String, XML>>> WPA = new Synced<>(
+    private static final Iterable<Lint> WPA = new Synced<>(
         new ListOf<>(
             new Sticky<>(
                 new PkWpa()
@@ -52,7 +52,7 @@ public final class Program {
     /**
      * Lints to use.
      */
-    private final Iterable<Lint<Map<String, XML>>> lints;
+    private final Iterable<Lint> lints;
 
     /**
      * The program package of XMIR files.
@@ -98,7 +98,7 @@ public final class Program {
      * @param map The map with them
      * @param list The lints
      */
-    Program(final Map<String, XML> map, final Iterable<Lint<Map<String, XML>>> list) {
+    Program(final Map<String, XML> map, final Iterable<Lint> list) {
         this.pkg = Collections.unmodifiableMap(map);
         this.lints = list;
     }
@@ -121,7 +121,7 @@ public final class Program {
      */
     public Collection<Defect> defects() {
         final Collection<Defect> messages = new ArrayList<>(0);
-        for (final Lint<Map<String, XML>> lint : this.lints) {
+        for (final Lint lint : this.lints) {
             try {
                 messages.addAll(new ScopedDefects(lint.defects(this.pkg), "W"));
             } catch (final IOException exception) {

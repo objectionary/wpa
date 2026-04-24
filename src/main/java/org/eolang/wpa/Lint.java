@@ -7,14 +7,14 @@ package org.eolang.wpa;
 import com.jcabi.xml.XML;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 /**
- * A single checker for an {@code .xmir} file.
+ * A single whole-program checker for a set of {@code .xmir} sources.
  *
- * @param <T> The type of entity to analyze
  * @since 0.0.1
  */
-public interface Lint<T> {
+public interface Lint {
 
     /**
      * Name of the lint.
@@ -24,11 +24,10 @@ public interface Lint<T> {
 
     /**
      * Find and return defects.
-     * @param entity The entity to analyze (could be {@link XML}
-     *  or {@link java.nio.file.Path})
+     * @param pkg The XMIR sources to analyze, keyed by program name
      * @return Defects
      */
-    Collection<Defect> defects(T entity) throws IOException;
+    Collection<Defect> defects(Map<String, XML> pkg) throws IOException;
 
     /**
      * Returns motive for a lint, explaining why this lint exists.

@@ -22,7 +22,7 @@ import org.cactoos.text.UncheckedText;
  *
  * @since 0.0.30
  */
-final class LtIncorrectAlias implements Lint<Map<String, XML>> {
+final class LtIncorrectAlias implements Lint {
 
     @Override
     public String name() {

@@ -93,7 +93,7 @@ final class LtWpaUnlintTest {
      * Lint that always complains in WPA scope.
      * @since 0.0.57
      */
-    static final class LtWpaAlways implements Lint<Map<String, XML>> {
+    static final class LtWpaAlways implements Lint {
         @Override
         public String name() {
             return "noname";

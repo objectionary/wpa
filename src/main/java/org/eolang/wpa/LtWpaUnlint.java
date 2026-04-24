@@ -16,18 +16,18 @@ import java.util.Map;
  *
  * @since 0.0.1
  */
-final class LtWpaUnlint implements Lint<Map<String, XML>> {
+final class LtWpaUnlint implements Lint {
 
     /**
      * The original lint.
      */
-    private final Lint<Map<String, XML>> origin;
+    private final Lint origin;
 
     /**
      * Ctor.
      * @param lint The lint to decorate
      */
-    LtWpaUnlint(final Lint<Map<String, XML>> lint) {
+    LtWpaUnlint(final Lint lint) {
         this.origin = lint;
     }
 
@@ -49,7 +49,7 @@ final class LtWpaUnlint implements Lint<Map<String, XML>> {
                     )
                 );
             }
-            defects.addAll(new LtUnlint(new LtMono(defect)).defects(xmir));
+            defects.addAll(new LtUnlint(defect).defects(xmir));
         }
         return defects;
     }

@@ -23,7 +23,7 @@ import org.cactoos.text.UncheckedText;
  *
  * @since 0.0.30
  */
-final class LtObjectIsNotUnique implements Lint<Map<String, XML>> {
+final class LtObjectIsNotUnique implements Lint {
 
     @Override
     public String name() {

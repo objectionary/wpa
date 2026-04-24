@@ -38,7 +38,7 @@ final class WpaStory {
     /**
      * WPA lints.
      */
-    private final Map<String, Lint<Map<String, XML>>> wpa;
+    private final Map<String, Lint> wpa;
 
     /**
      * Ctor.
@@ -46,7 +46,7 @@ final class WpaStory {
      * @param yml  Yaml to load
      * @param lnts Lints
      */
-    WpaStory(final String yml, final Map<String, Lint<Map<String, XML>>> lnts) {
+    WpaStory(final String yml, final Map<String, Lint> lnts) {
         this.yaml = yml;
         this.wpa = lnts;
     }

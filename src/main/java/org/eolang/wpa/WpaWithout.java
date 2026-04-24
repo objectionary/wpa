@@ -12,12 +12,12 @@ import org.cactoos.iterable.IterableEnvelope;
  * WPA lints without lint names.
  * @since 0.0.46
  */
-final class WpaWithout extends IterableEnvelope<Lint<Map<String, XML>>> {
+final class WpaWithout extends IterableEnvelope<Lint> {
 
     /**
      * WPA lints.
      */
-    private static final Iterable<Lint<Map<String, XML>>> WPA = new WpaLints();
+    private static final Iterable<Lint> WPA = new WpaLints();
 
     /**
      * Ctor.
@@ -25,6 +25,6 @@ final class WpaWithout extends IterableEnvelope<Lint<Map<String, XML>>> {
      * @param names Lints to exclude
      */
     WpaWithout(final String... names) {
-        super(new PkWpa(new WithoutLints<>(WpaWithout.WPA, names)));
+        super(new PkWpa(new WithoutLints(WpaWithout.WPA, names)));
     }
 }

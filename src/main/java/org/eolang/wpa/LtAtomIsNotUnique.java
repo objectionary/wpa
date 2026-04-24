@@ -33,7 +33,7 @@ import org.cactoos.text.UncheckedText;
  *
  * @since 0.0.31
  */
-final class LtAtomIsNotUnique implements Lint<Map<String, XML>> {
+final class LtAtomIsNotUnique implements Lint {
 
     /**
      * Stylesheet for adding `@fqn` attribute for atoms.

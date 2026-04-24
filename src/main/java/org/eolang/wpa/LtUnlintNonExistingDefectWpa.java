@@ -22,12 +22,12 @@ import org.cactoos.text.TextOf;
  *
  * @since 0.0.42
  */
-final class LtUnlintNonExistingDefectWpa implements Lint<Map<String, XML>> {
+final class LtUnlintNonExistingDefectWpa implements Lint {
 
     /**
      * Lints.
      */
-    private final Iterable<Lint<Map<String, XML>>> lints;
+    private final Iterable<Lint> lints;
 
     /**
      * Lint names for exclusion.
@@ -39,7 +39,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint<Map<String, XML>> {
      *
      * @param lnts Lints
      */
-    LtUnlintNonExistingDefectWpa(final Iterable<Lint<Map<String, XML>>> lnts) {
+    LtUnlintNonExistingDefectWpa(final Iterable<Lint> lnts) {
         this(lnts, new ListOf<>());
     }
 
@@ -50,7 +50,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint<Map<String, XML>> {
      * @param exld Lint names to exclude
      */
     LtUnlintNonExistingDefectWpa(
-        final Iterable<Lint<Map<String, XML>>> lnts, final Collection<String> exld
+        final Iterable<Lint> lnts, final Collection<String> exld
     ) {
         this.lints = lnts;
         this.excluded = exld;

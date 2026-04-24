@@ -21,12 +21,12 @@ import org.cactoos.list.ListOf;
  *
  * @since 0.1.0
  */
-final class PkWpa extends IterableEnvelope<Lint<Map<String, XML>>> {
+final class PkWpa extends IterableEnvelope<Lint> {
 
     /**
      * WPA lints.
      */
-    private static final Iterable<Lint<Map<String, XML>>> WPA = new WpaLints();
+    private static final Iterable<Lint> WPA = new WpaLints();
 
     /**
      * Default ctor.
@@ -39,15 +39,15 @@ final class PkWpa extends IterableEnvelope<Lint<Map<String, XML>>> {
      * Ctor.
      * @param lints Lints
      */
-    PkWpa(final Iterable<Lint<Map<String, XML>>> lints) {
+    PkWpa(final Iterable<Lint> lints) {
         super(
             new Shuffled<>(
-                new Mapped<Lint<Map<String, XML>>>(
+                new Mapped<Lint>(
                     new Chained<>(
                         LtWpaUnlint::new,
                         LtDfSticky::new
                     ),
-                    new Joined<Lint<Map<String, XML>>>(
+                    new Joined<Lint>(
                         lints,
                         new ListOf<>(
                             new LtUnlintNonExistingDefectWpa(lints)

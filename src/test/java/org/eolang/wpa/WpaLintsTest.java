@@ -54,7 +54,7 @@ final class WpaLintsTest {
             new WpaStory(
                 yaml,
                 new Sticky<>(
-                    new MapOf<String, Lint<Map<String, XML>>>(
+                    new MapOf<String, Lint>(
                         new Mapped<>(
                             wpl -> new MapEntry<>(wpl.name(), wpl),
                             new WpaLints()

@@ -14,7 +14,7 @@ import org.cactoos.list.ListOf;
  *
  * @since 0.0.43
  */
-final class WpaLints extends IterableEnvelope<Lint<Map<String, XML>>> {
+final class WpaLints extends IterableEnvelope<Lint> {
 
     /**
      * Ctor.

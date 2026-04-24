@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
  *  inconsistencies.
  */
 @SuppressWarnings("PMD.TooManyMethods")
-final class LtInconsistentArgs implements Lint<Map<String, XML>> {
+final class LtInconsistentArgs implements Lint {
 
     @Override
     public String name() {

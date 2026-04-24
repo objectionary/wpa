@@ -21,7 +21,7 @@ import org.cactoos.text.UncheckedText;
  *
  * @since 0.0.43
  */
-final class LtIncorrectNumberOfAttrs implements Lint<Map<String, XML>> {
+final class LtIncorrectNumberOfAttrs implements Lint {
 
     @Override
     public String name() {
