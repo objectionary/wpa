@@ -258,5 +258,4 @@ public interface Defect {
             return Objects.hash(this.rle, this.sev, this.oname, this.lineno, this.txt);
         }
     }
-
 }

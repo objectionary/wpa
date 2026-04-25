@@ -58,5 +58,4 @@ final class LtWpaUnlint implements Lint {
     public String motive() throws IOException {
         return this.origin.motive();
     }
-
 }

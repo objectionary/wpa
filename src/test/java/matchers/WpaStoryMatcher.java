@@ -47,13 +47,14 @@ public final class WpaStoryMatcher
             } else {
                 match = false;
                 final StringBuilder sum = new StringBuilder(1024)
-                    .append(String.format("%d XPath expression(s) failed:\n", failures.size()));
+                    .append(String.format("%d XPath expression(s) failed:%n", failures.size()));
                 failures.forEach(
-                    f -> sum.append('\n').append(String.format("FAIL: %s", f))
+                    f -> sum.append(System.lineSeparator()).append(String.format("FAIL: %s", f))
                 );
-                sum.append("\n\nFound defects:\n").append(defects).append("\nParsed objects:\n");
+                sum.append(String.format("%n%nFound defects:%n")).append(defects)
+                    .append(String.format("%nParsed objects:%n"));
                 out.get(defects).forEach(
-                    (object, xmir) -> sum.append(object).append('\n').append(xmir)
+                    (object, xmir) -> sum.append(object).append(System.lineSeparator()).append(xmir)
                 );
                 this.summary = sum.toString();
             }
@@ -71,6 +72,6 @@ public final class WpaStoryMatcher
     @SuppressWarnings("unchecked")
     @Override
     public void describeMismatch(final Object input, final Description description) {
-        description.appendText("\n").appendText(this.summary);
+        description.appendText(System.lineSeparator()).appendText(this.summary);
     }
 }

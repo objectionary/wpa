@@ -82,31 +82,43 @@ final class LtInconsistentArgs implements Lint {
         final List<Xnav> sources
     ) {
         final Map<String, List<Integer>> clashes = LtInconsistentArgs.clashes(sources, base);
-        final String program = new ProgramName(new XMLDocument(src.node())).get();
-        return LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream()
-            .flatMap(
-                entry -> src.path(entry.getKey())
-                    .filter(o -> !LtInconsistentArgs.objectReference(o))
-                    .filter(entry.getValue())
-                    .map(
-                        o -> {
-                            final int line = Integer.parseInt(
-                                o.attribute("line").text().orElse("0")
-                            );
-                            return new Defect.Default(
+        final Stream<Defect> result;
+        if (clashes.isEmpty()) {
+            result = Stream.empty();
+        } else {
+            final String program = new ProgramName(new XMLDocument(src.node())).get();
+            result = LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream()
+                .flatMap(
+                    entry -> src.path(entry.getKey())
+                        .filter(o -> !LtInconsistentArgs.objectReference(o))
+                        .filter(entry.getValue())
+                        .map(
+                            o -> new Defect.Default(
                                 this.name(),
                                 Severity.WARNING,
                                 program,
-                                line,
+                                LtInconsistentArgs.lineOf(o),
                                 String.format(
                                     "Object '%s' has arguments inconsistency (clashes with [%s])",
                                     base,
-                                    LtInconsistentArgs.objectClashes(clashes, program, line)
+                                    LtInconsistentArgs.objectClashes(
+                                        clashes, program, LtInconsistentArgs.lineOf(o)
+                                    )
                                 )
-                            );
-                        }
-                    )
-            );
+                            )
+                        )
+                );
+        }
+        return result;
+    }
+
+    /**
+     * Extract line number from an XML object.
+     * @param obj Object navigator
+     * @return Line number or 0 if not found
+     */
+    private static int lineOf(final Xnav obj) {
+        return Integer.parseInt(obj.attribute("line").text().orElse("0"));
     }
 
     /**

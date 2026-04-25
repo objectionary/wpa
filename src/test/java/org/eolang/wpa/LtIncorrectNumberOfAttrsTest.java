@@ -29,7 +29,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "foo",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Foo with one attribute.",
                                 "[a] > foo"
                             )
@@ -39,7 +39,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "app",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# App uses foo with two attributes instead.",
                                 "[a b] > app",
                                 "  foo a b > @"
@@ -62,7 +62,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "a",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# A with one attribute.",
                                 "[pos] > a"
                             )
@@ -72,7 +72,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "app",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# App uses a with correct number of arguments.",
                                 "[] > app",
                                 "  a 0"
@@ -95,7 +95,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "single",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# A with one attribute.",
                                 "[pos] > a",
                                 "",
@@ -121,7 +121,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "hello",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Say hello.",
                                 "[content] > hello"
                             )
@@ -131,7 +131,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "app",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# App uses undeclared object.",
                                 "[] > app",
                                 "  hello \"f\"",
@@ -155,7 +155,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "foo-unpackaged",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# An unpackaged foo.",
                                 "[] > foo"
                             )
@@ -165,7 +165,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "foo-packaged",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+package f",
                                 "",
                                 "# Packaged foo in f.",
@@ -177,7 +177,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "res",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+alias f.foo",
                                 "",
                                 "# Resolver application that uses f.foo.",
@@ -202,7 +202,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "a",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# A with one attribute.",
                                 "[pos] > a",
                                 ""
@@ -213,7 +213,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "b",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# B with two attributes.",
                                 "[left right] > b"
                             )
@@ -223,7 +223,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "usage",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Usage of A and B objects with vertical application.",
                                 "[] > app",
                                 "  b",
@@ -248,7 +248,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "x",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# X with one attribute.",
                                 "[pos sigma] > x",
                                 ""
@@ -259,7 +259,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "y",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Y with two attributes.",
                                 "[left right] > y"
                             )
@@ -269,7 +269,7 @@ final class LtIncorrectNumberOfAttrsTest {
                         "xy-app",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Usage of X and Y objects with vertical application.",
                                 "[] > app",
                                 "  y > @",

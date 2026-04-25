@@ -30,7 +30,7 @@ final class LtInconsistentArgsTest {
                         "foo",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Foo",
                                 "[] > foo",
                                 "  bar 42 > x",
@@ -54,7 +54,7 @@ final class LtInconsistentArgsTest {
                         "app",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# This is app",
                                 "[] > app",
                                 "  foo 42 > x",
@@ -78,7 +78,7 @@ final class LtInconsistentArgsTest {
                         "app",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# App",
                                 "[] > app",
                                 "  f 42 > x"
@@ -89,7 +89,7 @@ final class LtInconsistentArgsTest {
                         "main",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Main",
                                 "[] > main",
                                 "  f 1 2 3 > y"
@@ -112,7 +112,7 @@ final class LtInconsistentArgsTest {
                         "fizz",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Fizz",
                                 "[] > fizz",
                                 "  f 42 > x"
@@ -123,7 +123,7 @@ final class LtInconsistentArgsTest {
                         "buzz",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Buzz",
                                 "[a] > main",
                                 "  f a > x"
@@ -146,7 +146,7 @@ final class LtInconsistentArgsTest {
                         "text-fqn",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# App",
                                 "[] > app",
                                 "  Q.org.eolang.txt.text \"f\" \"y\" > x"
@@ -157,7 +157,7 @@ final class LtInconsistentArgsTest {
                         "text-alias",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+alias org.eolang.txt.text",
                                 "# Main",
                                 "[] > main",

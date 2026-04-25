@@ -40,9 +40,10 @@ final class LtIncorrectAliasTest {
                         "bar",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+alias foo",
-                                "+package ttt\n",
+                                "+package ttt",
+                                "",
                                 "# Bar",
                                 "[] > bar",
                                 "  foo > @"
@@ -68,9 +69,10 @@ final class LtIncorrectAliasTest {
                         "bar",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+alias foo",
-                                "+package ttt\n",
+                                "+package ttt",
+                                "",
                                 "# Bar",
                                 "[] > bar",
                                 "  foo > @"
@@ -111,9 +113,10 @@ final class LtIncorrectAliasTest {
                         "longer-alias",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+alias stdout org.eolang.io.stdout",
-                                "+package foo\n",
+                                "+package foo",
+                                "",
                                 "[] > main",
                                 "  stdout > @",
                                 "    \"hi!\""
@@ -137,9 +140,10 @@ final class LtIncorrectAliasTest {
             dir.resolve("bar.xmir"),
             new EoSyntax(
                 String.join(
-                    "\n",
+                    System.lineSeparator(),
                     "+alias ttt.foo",
-                    "+package ttt\n",
+                    "+package ttt",
+                    "",
                     "# Bar",
                     "[] > bar",
                     "  foo > @"
@@ -168,7 +172,7 @@ final class LtIncorrectAliasTest {
             dir.resolve("main.xmir"),
             new EoSyntax(
                 String.join(
-                    "\n",
+                    System.lineSeparator(),
                     "+alias stdout org.eolang.io.stdout",
                     "+package foo",
                     "",

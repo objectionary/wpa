@@ -35,5 +35,4 @@ public interface Lint {
      * @throws IOException if something went wrong
      */
     String motive() throws IOException;
-
 }

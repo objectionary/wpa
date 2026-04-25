@@ -4,8 +4,6 @@
  */
 package org.eolang.wpa;
 
-import com.jcabi.xml.XML;
-import java.util.Map;
 import org.cactoos.iterable.IterableEnvelope;
 
 /**

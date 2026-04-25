@@ -31,13 +31,13 @@ final class LtObjectIsNotUniqueTest {
                     new MapEntry<>(
                         "foo",
                         new EoSyntax(
-                            "# Foo\n[] > foo"
+                            String.join(System.lineSeparator(), "# Foo", "[] > foo")
                         ).parsed()
                     ),
                     new MapEntry<>(
                         "bar-with-foo",
                         new EoSyntax(
-                            "# Bar\n[] > foo"
+                            String.join(System.lineSeparator(), "# Bar", "[] > foo")
                         ).parsed()
                     )
                 )
@@ -59,7 +59,7 @@ final class LtObjectIsNotUniqueTest {
                         "c",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# 42",
                                 "[] > c",
                                 "  42 > @"
@@ -70,7 +70,7 @@ final class LtObjectIsNotUniqueTest {
                         "e",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# 52",
                                 "[] > e",
                                 "  52 > @"
@@ -93,7 +93,7 @@ final class LtObjectIsNotUniqueTest {
                         "baz",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Baz",
                                 "[] > baz"
                             )
@@ -103,7 +103,7 @@ final class LtObjectIsNotUniqueTest {
                         "baz-packaged",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+package utils",
                                 "",
                                 "# Baz",

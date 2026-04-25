@@ -35,7 +35,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                         "foo",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+unlint object-is-not-unique",
                                 "",
                                 "# Foo.",
@@ -47,7 +47,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                         "bar",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+unlint object-is-not-unique",
                                 "",
                                 "# Bar.",
@@ -73,7 +73,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                     "bar",
                     new EoSyntax(
                         String.join(
-                            "\n",
+                            System.lineSeparator(),
                             "+unlint object-is-not-unique",
                             "",
                             "# Bar",
@@ -99,7 +99,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                         "f",
                         new XMLDocument(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "<object>",
                                 "  <o name='f'/>",
                                 "</object>"
@@ -110,7 +110,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                         "fa",
                         new XMLDocument(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "<object>",
                                 "  <o name='fa'/>",
                                 "</object>"
@@ -136,7 +136,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                         "f",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+unlint unit-test-without-live-file",
                                 "",
                                 "# E tests.",
@@ -164,7 +164,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                         "foo",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+unlint inconsistent-args:6",
                                 "",
                                 "# Foo.",
@@ -193,7 +193,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                         "app",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+unlint inconsistent-args:25",
                                 "",
                                 "# App.",
@@ -221,7 +221,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                     "main",
                     new EoSyntax(
                         String.join(
-                            "\n",
+                            System.lineSeparator(),
                             "+unlint inconsistent-args:5-7",
                             "",
                             "# Main.",
@@ -249,7 +249,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                     "main",
                     new EoSyntax(
                         String.join(
-                            "\n",
+                            System.lineSeparator(),
                             "+unlint inconsistent-args:12-44",
                             "",
                             "# Semaphore.",
@@ -276,7 +276,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                     "main",
                     new EoSyntax(
                         String.join(
-                            "\n",
+                            System.lineSeparator(),
                             "+unlint inconsistent-args:1-5",
                             "",
                             "# Object that represents Jeffrey from a real world.",

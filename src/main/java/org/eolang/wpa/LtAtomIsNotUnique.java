@@ -10,12 +10,10 @@ import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import com.jcabi.xml.XSL;
 import com.jcabi.xml.XSLDocument;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -118,26 +116,35 @@ final class LtAtomIsNotUnique implements Lint {
      * @return Stream of defects
      */
     private Stream<Defect> sharedDefects(final Map<Xnav, List<String>> index) {
-        final Set<String> checked = ConcurrentHashMap.newKeySet();
-        return index.entrySet().stream()
+        final List<Map.Entry<Xnav, List<String>>> entries = new ArrayList<>(index.entrySet());
+        return IntStream.range(0, entries.size())
+            .boxed()
             .flatMap(
-                entry -> index.entrySet().stream()
-                    .filter(other -> !Objects.equals(other.getKey(), entry.getKey()))
-                    .filter(
-                        other -> checked.add(
-                            LtAtomIsNotUnique.pairHash(entry.getKey(), other.getKey())
-                        )
+                first -> IntStream.range(first + 1, entries.size())
+                    .mapToObj(
+                        second -> this.sharedBetween(entries.get(first), entries.get(second))
                     )
-                    .flatMap(
-                        other -> other.getValue().stream()
-                            .filter(entry.getValue()::contains)
-                            .flatMap(
-                                aname -> Stream.of(
-                                    this.sharedDefect(other.getKey(), entry.getKey(), aname),
-                                    this.sharedDefect(entry.getKey(), other.getKey(), aname)
-                                )
-                            )
-                    )
+                    .flatMap(Function.identity())
+            );
+    }
+
+    /**
+     * Build defects for the pair of sources that share atom FQNs.
+     * @param first One source entry (FQNs mapped from an Xnav)
+     * @param second Another source entry
+     * @return Stream of shared defects
+     */
+    private Stream<Defect> sharedBetween(
+        final Map.Entry<Xnav, List<String>> first,
+        final Map.Entry<Xnav, List<String>> second
+    ) {
+        return second.getValue().stream()
+            .filter(first.getValue()::contains)
+            .flatMap(
+                aname -> Stream.of(
+                    this.sharedDefect(second.getKey(), first.getKey(), aname),
+                    this.sharedDefect(first.getKey(), second.getKey(), aname)
+                )
             );
     }
 
@@ -178,32 +185,26 @@ final class LtAtomIsNotUnique implements Lint {
     }
 
     private static List<String> fqns(final Xnav xml) {
-        final List<String> result;
-        final List<String> fqns = xml.path("//o[@fqn]")
+        final String pack;
+        if (xml.path("/object/metas/meta[head='package']").count() == 1L) {
+            pack = xml.one("/object/metas/meta[head='package']/tail").text().get();
+        } else {
+            pack = "";
+        }
+        return xml.path("//o[@fqn]")
             .map(o -> o.attribute("fqn").text().get())
+            .map(
+                fqn -> {
+                    final String full;
+                    if (pack.isEmpty()) {
+                        full = String.format("Ф.%s", fqn);
+                    } else {
+                        full = String.format("Ф.%s.%s", pack, fqn);
+                    }
+                    return full;
+                }
+            )
             .collect(Collectors.toList());
-        if (
-            xml.path("/object/metas/meta[head='package']").count() == 1L
-        ) {
-            final String pack = xml.one("/object/metas/meta[head='package']/tail").text().get();
-            result = fqns.stream().map(fqn -> String.format("%s.%s", pack, fqn))
-                .collect(Collectors.toList());
-        } else {
-            result = fqns;
-        }
-        return result.stream()
-            .map(fqn -> String.format("Ф.%s", fqn))
-            .collect(Collectors.toList());
-    }
-
-    private static String pairHash(final Xnav first, final Xnav second) {
-        final String pair;
-        if (first.hashCode() < second.hashCode()) {
-            pair = String.format("%d:%d", first.hashCode(), second.hashCode());
-        } else {
-            pair = String.format("%d:%d", second.hashCode(), first.hashCode());
-        }
-        return pair;
     }
 
     private static String oname(final String fqn) {

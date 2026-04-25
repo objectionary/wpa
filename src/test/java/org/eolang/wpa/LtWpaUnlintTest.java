@@ -57,7 +57,14 @@ final class LtWpaUnlintTest {
             new LtWpaUnlint(new LtInconsistentArgs()).defects(
                 new MapOf<>(
                     "foo",
-                    new EoSyntax("[] > foo\n  x 1 > x1\n  x 1 2 > x2").parsed()
+                    new EoSyntax(
+                        String.join(
+                            System.lineSeparator(),
+                            "[] > foo",
+                            "  x 1 > x1",
+                            "  x 1 2 > x2"
+                        )
+                    ).parsed()
                 )
             ),
             Matchers.allOf(

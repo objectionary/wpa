@@ -30,7 +30,7 @@ final class LtAtomIsNotUniqueTest {
                         "foo",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Foo.",
                                 "[] > foo",
                                 "  [] > at ?"
@@ -41,7 +41,7 @@ final class LtAtomIsNotUniqueTest {
                         "bar",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Bar, but its foo.",
                                 "[] > foo",
                                 "  [] > at ?"
@@ -64,7 +64,7 @@ final class LtAtomIsNotUniqueTest {
                         "foo",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Fuz.",
                                 "[] > fuz",
                                 "  [] > test ?"
@@ -75,7 +75,7 @@ final class LtAtomIsNotUniqueTest {
                         "bar",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Its bar.",
                                 "[] > bar",
                                 "  [] > test ?"
@@ -98,7 +98,7 @@ final class LtAtomIsNotUniqueTest {
                         "foo-packaged",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+package xyz",
                                 "",
                                 "# App, XYZ packaged.",
@@ -111,7 +111,7 @@ final class LtAtomIsNotUniqueTest {
                         "bar-packaged",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+package xyz",
                                 "",
                                 "# App duplicate.",
@@ -136,7 +136,7 @@ final class LtAtomIsNotUniqueTest {
                         "nested",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Top object with nested atoms inside.",
                                 "[] > top",
                                 "  [] > test ?",
@@ -151,7 +151,7 @@ final class LtAtomIsNotUniqueTest {
                         "nested-dup",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Top object with nested atoms inside, but without test atom.",
                                 "[] > top",
                                 "  [] > f",
@@ -177,7 +177,7 @@ final class LtAtomIsNotUniqueTest {
                         "dup",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Dups.",
                                 "[attr] > dups",
                                 "  [] > foo ?",
@@ -205,7 +205,7 @@ final class LtAtomIsNotUniqueTest {
                         "x",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# X.",
                                 "[] > app",
                                 "  [] > x ?"
@@ -216,7 +216,7 @@ final class LtAtomIsNotUniqueTest {
                         "x-packaged",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+package xyz",
                                 "",
                                 "# X, but its packaged.",
@@ -241,7 +241,7 @@ final class LtAtomIsNotUniqueTest {
                         "a",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# A.",
                                 "[attr] > a",
                                 "  [] > x ?"
@@ -252,7 +252,7 @@ final class LtAtomIsNotUniqueTest {
                         "b",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# B.",
                                 "[attr] > b",
                                 "  [] > y ?"
@@ -275,7 +275,7 @@ final class LtAtomIsNotUniqueTest {
                         "spb",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "# Spb.",
                                 "[attr] > spb",
                                 "  [] > mow ?",
@@ -299,7 +299,7 @@ final class LtAtomIsNotUniqueTest {
                         "abc",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+package a.b.c",
                                 "",
                                 "# ABC.",
@@ -311,7 +311,7 @@ final class LtAtomIsNotUniqueTest {
                         "abc-packaged",
                         new EoSyntax(
                             String.join(
-                                "\n",
+                                System.lineSeparator(),
                                 "+package a.b.z",
                                 "",
                                 "# ABC.",

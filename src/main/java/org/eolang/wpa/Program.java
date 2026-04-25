@@ -8,16 +8,17 @@ import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.cactoos.iterable.Sticky;
 import org.cactoos.list.ListOf;
 import org.cactoos.list.Synced;
@@ -109,7 +110,7 @@ public final class Program {
      * @return Program analysis without specifics names
      */
     public Program without(final String... names) {
-        return new Program(this.pkg, new WpaWithout(names));
+        return new org.eolang.wpa.Program(this.pkg, new WpaWithout(names));
     }
 
     /**
@@ -159,22 +160,23 @@ public final class Program {
      * @throws IOException If fails
      */
     private static Map<String, XML> discover(final Path dir) throws IOException {
-        try (Stream<Path> walk = Files.walk(dir)) {
-            return walk
-                .filter(Files::isRegularFile)
-                .collect(
-                    Collectors.toMap(
-                        path -> new XmirKey(path, dir).asString(),
-                        path -> {
-                            try {
-                                return new XMLDocument(path);
-                            } catch (final FileNotFoundException ex) {
-                                throw new IllegalArgumentException(ex);
-                            }
-                        }
-                    )
-                );
-        }
+        final Map<String, XML> map = new HashMap<>(0);
+        Files.walkFileTree(
+            dir,
+            new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(
+                    final Path file, final BasicFileAttributes attrs
+                ) {
+                    try {
+                        map.put(new XmirKey(file, dir).asString(), new XMLDocument(file));
+                    } catch (final FileNotFoundException ex) {
+                        throw new IllegalArgumentException(ex);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            }
+        );
+        return map;
     }
-
 }

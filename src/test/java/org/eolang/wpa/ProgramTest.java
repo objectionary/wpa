@@ -43,7 +43,14 @@ final class ProgramTest {
                 this.withSource(
                     dir,
                     "a/b/c/first.xmir",
-                    "+package a.b.c\n+alias ttt.x obj\n\n# First.\n[] > first"
+                    String.join(
+                        System.lineSeparator(),
+                        "+package a.b.c",
+                        "+alias ttt.x obj",
+                        "",
+                        "# First.",
+                        "[] > first"
+                    )
                 )
             ).defects(),
             Matchers.allOf(
@@ -62,7 +69,7 @@ final class ProgramTest {
                     dir,
                     "foo.xmir",
                     String.join(
-                        "\n",
+                        System.lineSeparator(),
                         "+alias a.b.nowhere",
                         "+unlint incorrect-alias",
                         "",
@@ -78,16 +85,22 @@ final class ProgramTest {
     @Tag("deep")
     @RepeatedTest(5)
     void checksInParallel(@Mktmp final Path dir) throws IOException {
-        final Path source = this.withSource(
+        this.withSource(
             dir,
             "foo.xmir",
-            "# first.\n# second.\n[] > foo\n"
+            String.join(
+                System.lineSeparator(),
+                "# first.",
+                "# second.",
+                "[] > foo",
+                ""
+            )
         );
         MatcherAssert.assertThat(
             "",
             new SetOf<>(
                 new Together<>(
-                    thread -> new Program(source).defects().size()
+                    thread -> new Program(dir).defects().size()
                 )
             ).size(),
             Matchers.equalTo(1)
@@ -110,7 +123,15 @@ final class ProgramTest {
                 this.withSource(
                     dir,
                     "bar.xmir",
-                    "+alias x.y.ta\n\n# first.\n# second.\n[] > bar\n"
+                    String.join(
+                        System.lineSeparator(),
+                        "+alias x.y.ta",
+                        "",
+                        "# first.",
+                        "# second.",
+                        "[] > bar",
+                        ""
+                    )
                 )
             ).without("incorrect-alias").defects().stream()
                 .filter(defect -> defect.rule().equals("incorrect-alias"))
@@ -127,13 +148,21 @@ final class ProgramTest {
                 this.withSource(
                     dir,
                     "bar.xmir",
-                    "+alias aaa.t\n\n# first.\n# second.\n[] > bar\n"
+                    String.join(
+                        System.lineSeparator(),
+                        "+alias aaa.t",
+                        "",
+                        "# first.",
+                        "# second.",
+                        "[] > bar",
+                        ""
+                    )
                 ),
                 this.withSource(
                     dir,
                     "foo-test.xmir",
                     String.join(
-                        "\n",
+                        System.lineSeparator(),
                         "# Foo.",
                         "[] > foo",
                         "  x 2 52 > o",
@@ -157,7 +186,7 @@ final class ProgramTest {
                     "f",
                     new EoSyntax(
                         String.join(
-                            "\n",
+                            System.lineSeparator(),
                             "+alias x.y.z z",
                             String.format("+unlint %s", lid),
                             "",
@@ -193,9 +222,9 @@ final class ProgramTest {
                     "foo",
                     new EoSyntax(
                         String.join(
-                            "\n",
+                            System.lineSeparator(),
                             "+alias ttt.x",
-                            "\n",
+                            System.lineSeparator(),
                             "# Foo",
                             "[] > foo"
                         )
@@ -222,5 +251,4 @@ final class ProgramTest {
         );
         return dir;
     }
-
 }

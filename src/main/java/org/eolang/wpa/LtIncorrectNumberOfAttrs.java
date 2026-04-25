@@ -114,9 +114,15 @@ final class LtIncorrectNumberOfAttrs implements Lint {
             .flatMap(
                 xmir -> new Xnav(xmir.inner()).element("object")
                     .elements(Filter.withName("o"))
-                    .map(xob -> new ObjectDef(xmir, xob))
+                    .map(xob -> new LtIncorrectNumberOfAttrs.ObjectDef(xmir, xob))
             )
-            .collect(Collectors.toMap(ObjectDef::fqn, ObjectDef::attrCount, (a, b) -> a));
+            .collect(
+                Collectors.toMap(
+                    LtIncorrectNumberOfAttrs.ObjectDef::fqn,
+                    LtIncorrectNumberOfAttrs.ObjectDef::attrCount,
+                    (a, b) -> a
+                )
+            );
     }
 
     /**

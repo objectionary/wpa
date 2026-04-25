@@ -57,7 +57,7 @@ final class WpaStory {
      * @throws IOException if I/O fails
      */
     @SuppressWarnings("unchecked")
-    public Map<List<String>, Map<XML, Map<String, XML>>> execute() throws IOException {
+    Map<List<String>, Map<XML, Map<String, XML>>> execute() throws IOException {
         final Map<String, Object> loaded = new Yaml().load(this.yaml);
         Assumptions.assumeTrue(loaded.get("skip") == null);
         final Map<String, XML> programs = new HashMap<>(0);
@@ -123,7 +123,7 @@ final class WpaStory {
         }
         throw new IllegalStateException(
             String.format(
-                "Parsed EO snippet '%s' contains errors, but it should not:\n %s",
+                "Parsed EO snippet '%s' contains errors, but it should not:%n %s",
                 name, xmir
             )
         );

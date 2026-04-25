@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.list.ListOf;
@@ -126,21 +127,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
             Collectors.toMap(
                 xml -> xml,
                 xml -> StreamSupport.stream(this.lints.spliterator(), false)
-                    .flatMap(
-                        wpl -> {
-                            try {
-                                return wpl.defects(pkg).stream();
-                            } catch (final IOException exception) {
-                                throw new IllegalStateException(
-                                    String.format(
-                                        "IO operation failed while linting program with %s",
-                                        wpl.name()
-                                    ),
-                                    exception
-                                );
-                            }
-                        }
-                    )
+                    .flatMap(wpl -> LtUnlintNonExistingDefectWpa.defectStream(wpl, pkg))
                     .collect(
                         Collectors.groupingBy(
                             Defect::rule,
@@ -149,5 +136,25 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
                     )
             )
         );
+    }
+
+    /**
+     * Produce a stream of defects from a lint, wrapping IO errors.
+     * @param lint The lint
+     * @param pkg The package
+     * @return Stream of defects
+     */
+    private static Stream<Defect> defectStream(final Lint lint, final Map<String, XML> pkg) {
+        try {
+            return lint.defects(pkg).stream();
+        } catch (final IOException exception) {
+            throw new IllegalStateException(
+                String.format(
+                    "IO operation failed while linting program with %s",
+                    lint.name()
+                ),
+                exception
+            );
+        }
     }
 }

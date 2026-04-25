@@ -62,9 +62,9 @@ final class LtUnlint {
                 if (unlint.matches(String.format("%s:\\d+-\\d+", lname))) {
                     problematic.removeIf(new UnlintInRange(unlint));
                 } else if (LtUnlint.LINE_NUMBER.matcher(unlint).matches()) {
-                    final List<String> split = new ListOf<>(unlint.split(":"));
-                    final int lineno = Integer.parseInt(split.get(1));
-                    problematic.removeIf(line -> line == lineno);
+                    problematic.removeIf(
+                        Integer.valueOf(new ListOf<>(unlint.split(":")).get(1))::equals
+                    );
                 } else {
                     problematic.clear();
                 }

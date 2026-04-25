@@ -4,7 +4,6 @@
  */
 package org.eolang.wpa;
 
-import com.jcabi.xml.XML;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import matchers.WpaStoryMatcher;
 import org.cactoos.iterable.Mapped;
@@ -73,7 +71,9 @@ final class WpaLintsTest {
             .map(Lint::name)
             .collect(Collectors.toList());
         MatcherAssert.assertThat(
-            "All YAML pack files must correspond to WPA lints",
+            String.format(
+                "All YAML pack files must correspond to WPA lints: %s", names
+            ),
             Files.walk(Paths.get("src/test/resources/org/eolang/lints/packs/wpa"))
                 .filter(Files::isRegularFile)
                 .allMatch(
