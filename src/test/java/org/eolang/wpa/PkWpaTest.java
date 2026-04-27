@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link PkWpa}.
- *
  * @since 0.23
  */
 final class PkWpaTest {
@@ -40,10 +39,10 @@ final class PkWpaTest {
     void staysInsideThePackage() {
         ArchRuleDefinition.classes()
             .that().haveSimpleName("PkWpa")
-            .should().bePackagePrivate()
-            .check(new ClassFileImporter()
-                .withImportOption(new ImportOption.DoNotIncludeTests())
-                .importPackages("org.eolang.wpa")
+            .should().bePackagePrivate().check(
+                new ClassFileImporter()
+                    .withImportOption(new ImportOption.DoNotIncludeTests())
+                    .importPackages("org.eolang.wpa")
             );
     }
 }

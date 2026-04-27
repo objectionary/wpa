@@ -11,7 +11,6 @@ import java.util.Map;
 
 /**
  * A single whole-program checker for a set of {@code .xmir} sources.
- *
  * @since 0.0.1
  */
 public interface Lint {

@@ -26,7 +26,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 /**
  * Tests for {@link WpaLints}.
- *
  * @since 0.0.43
  */
 final class WpaLintsTest {
@@ -36,10 +35,10 @@ final class WpaLintsTest {
     void staysPackagePrivate() {
         ArchRuleDefinition.classes()
             .that().haveSimpleName("WpaLints")
-            .should().bePackagePrivate()
-            .check(new ClassFileImporter()
-                .withImportOption(new ImportOption.DoNotIncludeTests())
-                .importPackages("org.eolang.wpa")
+            .should().bePackagePrivate().check(
+                new ClassFileImporter()
+                    .withImportOption(new ImportOption.DoNotIncludeTests())
+                    .importPackages("org.eolang.wpa")
             );
     }
 
@@ -75,8 +74,7 @@ final class WpaLintsTest {
                 "All YAML pack files must correspond to WPA lints: %s", names
             ),
             Files.walk(Paths.get("src/test/resources/org/eolang/lints/packs/wpa"))
-                .filter(Files::isRegularFile)
-                .allMatch(
+                .filter(Files::isRegularFile).allMatch(
                     path -> names.contains(path.getParent().getFileName().toString())
                 ),
             new IsEqual<>(true)

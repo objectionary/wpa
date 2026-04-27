@@ -16,7 +16,6 @@ import org.cactoos.list.ListOf;
 /**
  * Internal helper that applies {@code +unlint} meta filtering to a single
  * defect discovered in the given XMIR.
- *
  * @since 0.0.1
  */
 final class LtUnlint {

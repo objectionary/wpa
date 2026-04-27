@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link LtAtomIsNotUnique}.
- *
  * @since 0.0.31
  */
 final class LtAtomIsNotUniqueTest {

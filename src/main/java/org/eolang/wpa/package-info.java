@@ -5,7 +5,6 @@
 
 /**
  * Whole-program analyzers (WPA) for EO.
- *
  * @since 0.0.1
  */
 package org.eolang.wpa;

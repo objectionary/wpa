@@ -18,7 +18,6 @@ import org.cactoos.text.UncheckedText;
 
 /**
  * Lint to check incorrect number of attributes passed to the object in scope.
- *
  * @since 0.0.43
  */
 final class LtIncorrectNumberOfAttrs implements Lint {
@@ -30,15 +29,13 @@ final class LtIncorrectNumberOfAttrs implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) throws IOException {
-        return pkg.entrySet().stream()
-            .flatMap(
-                entry -> this.sourceDefects(
-                    entry.getKey(),
-                    entry.getValue(),
-                    LtIncorrectNumberOfAttrs.objectDefinitions(pkg)
-                ).stream()
-            )
-            .collect(Collectors.toList());
+        return pkg.entrySet().stream().flatMap(
+            entry -> this.sourceDefects(
+                entry.getKey(),
+                entry.getValue(),
+                LtIncorrectNumberOfAttrs.objectDefinitions(pkg)
+            ).stream()
+        ).collect(Collectors.toList());
     }
 
     @Override
@@ -66,17 +63,15 @@ final class LtIncorrectNumberOfAttrs implements Lint {
         final XML xmir,
         final Map<String, Integer> definitions
     ) {
-        return new Xnav(xmir.inner()).path("//o[@base and not(@base='∅')]")
-            .filter(
-                xnav -> {
-                    final Integer expected = definitions.get(
-                        xnav.attribute("base").text().orElse("unknown")
-                    );
-                    return expected != null
-                        && (int) xnav.elements(Filter.withName("o")).count() != expected;
-                }
-            )
-            .map(xnav -> this.objectDefect(program, xnav, definitions))
+        return new Xnav(xmir.inner()).path("//o[@base and not(@base='∅')]").filter(
+            xnav -> {
+                final Integer expected = definitions.get(
+                    xnav.attribute("base").text().orElse("unknown")
+                );
+                return expected != null
+                    && (int) xnav.elements(Filter.withName("o")).count() != expected;
+            }
+        ).map(xnav -> this.objectDefect(program, xnav, definitions))
             .collect(Collectors.toList());
     }
 
@@ -110,19 +105,17 @@ final class LtIncorrectNumberOfAttrs implements Lint {
      * @return Map of object name and attributes count
      */
     private static Map<String, Integer> objectDefinitions(final Map<String, XML> pkg) {
-        return pkg.values().stream()
-            .flatMap(
-                xmir -> new Xnav(xmir.inner()).element("object")
-                    .elements(Filter.withName("o"))
-                    .map(xob -> new LtIncorrectNumberOfAttrs.ObjectDef(xmir, xob))
+        return pkg.values().stream().flatMap(
+            xmir -> new Xnav(xmir.inner()).element("object")
+                .elements(Filter.withName("o"))
+                .map(xob -> new LtIncorrectNumberOfAttrs.ObjectDef(xmir, xob))
+        ).collect(
+            Collectors.toMap(
+                LtIncorrectNumberOfAttrs.ObjectDef::fqn,
+                LtIncorrectNumberOfAttrs.ObjectDef::attrCount,
+                (a, b) -> a
             )
-            .collect(
-                Collectors.toMap(
-                    LtIncorrectNumberOfAttrs.ObjectDef::fqn,
-                    LtIncorrectNumberOfAttrs.ObjectDef::attrCount,
-                    (a, b) -> a
-                )
-            );
+        );
     }
 
     /**
@@ -134,11 +127,9 @@ final class LtIncorrectNumberOfAttrs implements Lint {
     private static String packagedFqn(final String oname, final Xnav xml) {
         final List<Xnav> packages = xml.element("object")
             .element("metas")
-            .elements(Filter.withName("meta"))
-            .filter(
+            .elements(Filter.withName("meta")).filter(
                 meta -> "package".equals(meta.element("head").text().get())
-            )
-            .collect(Collectors.toList());
+            ).collect(Collectors.toList());
         final String result;
         if (packages.isEmpty()) {
             result = String.format("Φ.%s", oname);

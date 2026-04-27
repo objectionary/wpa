@@ -13,7 +13,6 @@ import org.hamcrest.Description;
 
 /**
  * Hamcrest matcher to check story of {@link org.eolang.wpa.WpaStory}.
- *
  * @since 0.0.43
  */
 public final class WpaStoryMatcher

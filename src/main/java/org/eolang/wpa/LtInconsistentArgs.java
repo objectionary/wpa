@@ -24,7 +24,6 @@ import org.w3c.dom.Node;
 
 /**
  * Lint for checking arguments' inconsistency provided to the objects.
- *
  * @since 0.0.41
  * @todo #259:60min Optimize performance of inconsistent arguments finding.
  *  Instead of re-collecting objects in nested loops, we should merge all objects
@@ -45,15 +44,13 @@ final class LtInconsistentArgs implements Lint {
         final Map<Xnav, Map<String, List<Integer>>> whole = LtInconsistentArgs.scanUsages(pkg);
         final Map<String, List<Xnav>> bases = LtInconsistentArgs.baseOccurrences(whole);
         return LtInconsistentArgs.mergedSources(whole).entrySet().stream()
-            .filter(entry -> entry.getValue().stream().distinct().count() != 1L)
-            .flatMap(
+            .filter(entry -> entry.getValue().stream().distinct().count() != 1L).flatMap(
                 entry -> bases.get(entry.getKey()).stream().flatMap(
                     src -> this.findClashDefects(
                         entry.getKey(), src, bases.get(entry.getKey())
                     )
                 )
-            )
-            .collect(Collectors.toList());
+            ).collect(Collectors.toList());
     }
 
     @Override
@@ -87,27 +84,25 @@ final class LtInconsistentArgs implements Lint {
             result = Stream.empty();
         } else {
             final String program = new ProgramName(new XMLDocument(src.node())).get();
-            result = LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream()
-                .flatMap(
-                    entry -> src.path(entry.getKey())
-                        .filter(o -> !LtInconsistentArgs.objectReference(o))
-                        .filter(entry.getValue())
-                        .map(
-                            o -> new Defect.Default(
-                                this.name(),
-                                Severity.WARNING,
-                                program,
-                                LtInconsistentArgs.lineOf(o),
-                                String.format(
-                                    "Object '%s' has arguments inconsistency (clashes with [%s])",
-                                    base,
-                                    LtInconsistentArgs.objectClashes(
-                                        clashes, program, LtInconsistentArgs.lineOf(o)
-                                    )
+            result = LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream().flatMap(
+                entry -> src.path(entry.getKey())
+                    .filter(o -> !LtInconsistentArgs.objectReference(o))
+                    .filter(entry.getValue()).map(
+                        o -> new Defect.Default(
+                            this.name(),
+                            Severity.WARNING,
+                            program,
+                            LtInconsistentArgs.lineOf(o),
+                            String.format(
+                                "Object '%s' has arguments inconsistency (clashes with [%s])",
+                                base,
+                                LtInconsistentArgs.objectClashes(
+                                    clashes, program, LtInconsistentArgs.lineOf(o)
                                 )
                             )
                         )
-                );
+                    )
+            );
         }
         return result;
     }
@@ -124,24 +119,22 @@ final class LtInconsistentArgs implements Lint {
     /**
      * Scan all usages across package.
      * @param pkg Package with sources
-     * @return Map of all object usages: source is the key, object name, arguments is the value.
+     * @return Map of all object usages: source is the key, object name, arguments is the value
      */
     private static Map<Xnav, Map<String, List<Integer>>> scanUsages(final Map<String, XML> pkg) {
         return pkg.values().stream()
-            .map(xmir -> new Xnav(xmir.inner()))
-            .collect(
+            .map(xmir -> new Xnav(xmir.inner())).collect(
                 Collectors.toMap(
                     source -> source,
-                    source -> source.path("//o[@base]")
-                        .collect(
-                            Collectors.groupingBy(
-                                o -> LtInconsistentArgs.objectRef(o, source),
-                                Collectors.mapping(
-                                    o -> o.node().getChildNodes().getLength(),
-                                    Collectors.toList()
-                                )
+                    source -> source.path("//o[@base]").collect(
+                        Collectors.groupingBy(
+                            o -> LtInconsistentArgs.objectRef(o, source),
+                            Collectors.mapping(
+                                o -> o.node().getChildNodes().getLength(),
+                                Collectors.toList()
                             )
                         )
+                    )
                 )
             );
     }
@@ -178,8 +171,7 @@ final class LtInconsistentArgs implements Lint {
         final Map<Xnav, Map<String, List<Integer>>> whole
     ) {
         return whole.values().stream()
-            .flatMap(localized -> localized.entrySet().stream())
-            .collect(
+            .flatMap(localized -> localized.entrySet().stream()).collect(
                 Collectors.toMap(
                     Map.Entry::getKey,
                     entry -> new ListOf<>(entry.getValue()),
@@ -199,17 +191,15 @@ final class LtInconsistentArgs implements Lint {
     private static Map<String, List<Xnav>> baseOccurrences(
         final Map<Xnav, Map<String, List<Integer>>> whole
     ) {
-        return whole.entrySet().stream()
-            .flatMap(
-                entry -> entry.getValue().keySet().stream()
-                    .map(base -> Map.entry(base, entry.getKey()))
+        return whole.entrySet().stream().flatMap(
+            entry -> entry.getValue().keySet().stream()
+                .map(base -> Map.entry(base, entry.getKey()))
+        ).collect(
+            Collectors.groupingBy(
+                Map.Entry::getKey,
+                Collectors.mapping(Map.Entry::getValue, Collectors.toList())
             )
-            .collect(
-                Collectors.groupingBy(
-                    Map.Entry::getKey,
-                    Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-                )
-            );
+        );
     }
 
     /**
@@ -222,8 +212,7 @@ final class LtInconsistentArgs implements Lint {
         final Iterable<Xnav> sources, final String base
     ) {
         return java.util.stream.StreamSupport.stream(sources.spliterator(), false)
-            .flatMap(src -> LtInconsistentArgs.sourceClashes(src, base))
-            .collect(
+            .flatMap(src -> LtInconsistentArgs.sourceClashes(src, base)).collect(
                 Collectors.groupingBy(
                     Map.Entry::getKey,
                     Collectors.mapping(Map.Entry::getValue, Collectors.toList())
@@ -240,18 +229,16 @@ final class LtInconsistentArgs implements Lint {
     private static Stream<Map.Entry<String, Integer>> sourceClashes(
         final Xnav src, final String base
     ) {
-        return LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream()
-            .flatMap(
-                entry -> src.path(entry.getKey())
-                    .filter(o -> !LtInconsistentArgs.objectReference(o))
-                    .filter(entry.getValue())
-                    .map(
-                        o -> Map.entry(
-                            new ProgramName(new XMLDocument(src.node())).get(),
-                            Integer.parseInt(o.attribute("line").text().orElse("0"))
-                        )
+        return LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream().flatMap(
+            entry -> src.path(entry.getKey())
+                .filter(o -> !LtInconsistentArgs.objectReference(o))
+                .filter(entry.getValue()).map(
+                    o -> Map.entry(
+                        new ProgramName(new XMLDocument(src.node())).get(),
+                        Integer.parseInt(o.attribute("line").text().orElse("0"))
                     )
-            );
+                )
+        );
     }
 
     /**
@@ -264,13 +251,11 @@ final class LtInconsistentArgs implements Lint {
     private static String objectClashes(
         final Map<String, List<Integer>> clashes, final String current, final int oline
     ) {
-        return clashes.entrySet().stream()
-            .flatMap(
-                entry -> entry.getValue().stream()
-                    .filter(line -> !(entry.getKey().equals(current) && line == oline))
-                    .map(line -> String.format("%s:%d", entry.getKey(), line))
-            )
-            .collect(Collectors.joining(", "));
+        return clashes.entrySet().stream().flatMap(
+            entry -> entry.getValue().stream()
+                .filter(line -> !(entry.getKey().equals(current) && line == oline))
+                .map(line -> String.format("%s:%d", entry.getKey(), line))
+        ).collect(Collectors.joining(", "));
     }
 
     /**

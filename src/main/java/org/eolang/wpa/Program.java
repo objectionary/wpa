@@ -34,6 +34,7 @@ import org.cactoos.list.Synced;
  * final String version = Manifests.read("Wpa-Version");
  * }
  * </pre>
+ *
  * @see <a href="https://news.eolang.org/2022-11-25-xmir-guide.html">XMIR</a>
  * @since 0.1.0
  */
@@ -64,6 +65,7 @@ public final class Program {
      * Ctor.
      * @param dirs The directory
      * @throws IOException If fails
+     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     public Program(final Path... dirs) throws IOException {
         this(Arrays.asList(dirs));
@@ -77,6 +79,7 @@ public final class Program {
      *
      * @param dirs The directory
      * @throws IOException If fails
+     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     public Program(final Collection<Path> dirs) throws IOException {
         this(Program.discover(dirs));
@@ -98,6 +101,7 @@ public final class Program {
      *
      * @param map The map with them
      * @param list The lints
+     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     Program(final Map<String, XML> map, final Iterable<Lint> list) {
         this.pkg = Collections.unmodifiableMap(map);

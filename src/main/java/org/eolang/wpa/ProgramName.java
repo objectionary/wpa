@@ -13,7 +13,6 @@ import java.util.Optional;
  * Program name extractor from XMIR.
  * Compatible with eo-parser 0.60.0+ which may produce XMIR without
  * object elements when there are parsing errors.
- *
  * @since 0.0.1
  */
 final class ProgramName {
@@ -26,6 +25,7 @@ final class ProgramName {
     /**
      * Ctor.
      * @param xml XML document
+     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     ProgramName(final XML xml) {
         this(new Xnav(xml.inner()));
@@ -66,14 +66,11 @@ final class ProgramName {
                     .map("package"::equals)
                     .orElse(false)
             )
-        )
-        .findFirst()
-        .map(
+        ).findFirst().map(
             meta -> meta.element("tail").text().map(
                 pckg -> String.join(".", pckg, this.objectName().orElse("unknown"))
             ).orElseGet(() -> this.objectName().orElse("unknown"))
-        )
-        .orElseGet(() -> this.objectName().orElse("unknown"));
+        ).orElseGet(() -> this.objectName().orElse("unknown"));
     }
 
     /**
@@ -85,8 +82,7 @@ final class ProgramName {
             .element("object")
             .element("o")
             .attribute("name")
-            .text()
-            .or(
+            .text().or(
                 () -> this.xnav
                     .element("object")
                     .element("class")

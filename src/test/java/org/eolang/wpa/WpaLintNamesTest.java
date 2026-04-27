@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link WpaLintNames}.
- *
  * @since 0.0.43
  */
 final class WpaLintNamesTest {
@@ -21,10 +20,10 @@ final class WpaLintNamesTest {
     void staysPackagePrivate() {
         ArchRuleDefinition.classes()
             .that().haveSimpleName("WpaLintNames")
-            .should().bePackagePrivate()
-            .check(new ClassFileImporter()
-                .withImportOption(new ImportOption.DoNotIncludeTests())
-                .importPackages("org.eolang.wpa")
+            .should().bePackagePrivate().check(
+                new ClassFileImporter()
+                    .withImportOption(new ImportOption.DoNotIncludeTests())
+                    .importPackages("org.eolang.wpa")
             );
     }
 }
