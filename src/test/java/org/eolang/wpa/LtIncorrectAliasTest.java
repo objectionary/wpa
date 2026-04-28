@@ -25,7 +25,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests for {@link LtIncorrectAlias}.
- *
  * @since 0.0.30
  */
 final class LtIncorrectAliasTest {

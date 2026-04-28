@@ -28,7 +28,6 @@ import org.cactoos.text.UncheckedText;
  * All atom FQNs in the entire scope of EO program must be unique.
  * This lint firstly transforms the original XMIR into XMIR that contains `@fqn`
  * attributes for each atom `o`, and then lints it.
- *
  * @since 0.0.31
  */
 final class LtAtomIsNotUnique implements Lint {
@@ -40,6 +39,7 @@ final class LtAtomIsNotUnique implements Lint {
 
     /**
      * Ctor.
+     * @checkstyle ConstructorsCodeFreeCheck (10 lines)
      */
     LtAtomIsNotUnique() {
         this(
@@ -53,7 +53,6 @@ final class LtAtomIsNotUnique implements Lint {
 
     /**
      * Ctor.
-     *
      * @param sheet Sheet
      */
     LtAtomIsNotUnique(final XSL sheet) {
@@ -96,18 +95,16 @@ final class LtAtomIsNotUnique implements Lint {
      * @return Stream of defects
      */
     private Stream<Defect> duplicateDefects(final Map<Xnav, List<String>> index) {
-        return index.entrySet().stream()
-            .flatMap(
-                entry -> entry.getValue().stream()
-                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                    .entrySet()
-                    .stream()
-                    .filter(e -> e.getValue() > 1L)
-                    .flatMap(
-                        e -> IntStream.range(0, Math.toIntExact(e.getValue()))
-                            .mapToObj(pos -> this.singleDefect(entry.getKey(), e.getKey(), pos))
-                    )
-            );
+        return index.entrySet().stream().flatMap(
+            entry -> entry.getValue().stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() > 1L).flatMap(
+                    e -> IntStream.range(0, Math.toIntExact(e.getValue()))
+                        .mapToObj(pos -> this.singleDefect(entry.getKey(), e.getKey(), pos))
+                )
+        );
     }
 
     /**
@@ -118,13 +115,10 @@ final class LtAtomIsNotUnique implements Lint {
     private Stream<Defect> sharedDefects(final Map<Xnav, List<String>> index) {
         final List<Map.Entry<Xnav, List<String>>> entries = new ArrayList<>(index.entrySet());
         return IntStream.range(0, entries.size())
-            .boxed()
-            .flatMap(
-                first -> IntStream.range(first + 1, entries.size())
-                    .mapToObj(
-                        second -> this.sharedBetween(entries.get(first), entries.get(second))
-                    )
-                    .flatMap(Function.identity())
+            .boxed().flatMap(
+                first -> IntStream.range(first + 1, entries.size()).mapToObj(
+                    second -> this.sharedBetween(entries.get(first), entries.get(second))
+                ).flatMap(Function.identity())
             );
     }
 
@@ -139,8 +133,7 @@ final class LtAtomIsNotUnique implements Lint {
         final Map.Entry<Xnav, List<String>> second
     ) {
         return second.getValue().stream()
-            .filter(first.getValue()::contains)
-            .flatMap(
+            .filter(first.getValue()::contains).flatMap(
                 aname -> Stream.of(
                     this.sharedDefect(second.getKey(), first.getKey(), aname),
                     this.sharedDefect(first.getKey(), second.getKey(), aname)
@@ -192,8 +185,7 @@ final class LtAtomIsNotUnique implements Lint {
             pack = "";
         }
         return xml.path("//o[@fqn]")
-            .map(o -> o.attribute("fqn").text().get())
-            .map(
+            .map(o -> o.attribute("fqn").text().get()).map(
                 fqn -> {
                     final String full;
                     if (pack.isEmpty()) {
@@ -203,8 +195,7 @@ final class LtAtomIsNotUnique implements Lint {
                     }
                     return full;
                 }
-            )
-            .collect(Collectors.toList());
+            ).collect(Collectors.toList());
     }
 
     private static String oname(final String fqn) {

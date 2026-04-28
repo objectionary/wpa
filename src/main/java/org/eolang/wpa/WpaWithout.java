@@ -19,7 +19,6 @@ final class WpaWithout extends IterableEnvelope<Lint> {
 
     /**
      * Ctor.
-     *
      * @param names Lints to exclude
      */
     WpaWithout(final String... names) {

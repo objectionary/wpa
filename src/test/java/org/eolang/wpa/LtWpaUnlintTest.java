@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link LtWpaUnlint}.
- *
  * @since 0.0.57
  */
 final class LtWpaUnlintTest {
@@ -101,6 +100,7 @@ final class LtWpaUnlintTest {
      * @since 0.0.57
      */
     static final class LtWpaAlways implements Lint {
+
         @Override
         public String name() {
             return "noname";

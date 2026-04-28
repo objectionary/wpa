@@ -4,7 +4,8 @@
 .claude/
 .DS_Store
 .eoc/
-.github/styles/
+.github/styles/*
+!.github/styles/config/
 .idea
 .idea/
 .mvm/

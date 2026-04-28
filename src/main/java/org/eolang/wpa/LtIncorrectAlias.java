@@ -19,7 +19,6 @@ import org.cactoos.text.UncheckedText;
 
 /**
  * Checks that `+alias` is pointing to existing `.xmir` files.
- *
  * @since 0.0.30
  */
 final class LtIncorrectAlias implements Lint {
@@ -31,14 +30,12 @@ final class LtIncorrectAlias implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        return pkg.values().stream()
-            .flatMap(
-                xmir -> new Xnav(xmir.inner())
-                    .path("/object/metas/meta[head='alias']")
-                    .filter(alias -> !pkg.containsKey(LtIncorrectAlias.lookupName(alias)))
-                    .map(alias -> LtIncorrectAlias.aliasDefect(alias, xmir, pkg))
-            )
-            .collect(Collectors.toList());
+        return pkg.values().stream().flatMap(
+            xmir -> new Xnav(xmir.inner())
+                .path("/object/metas/meta[head='alias']")
+                .filter(alias -> !pkg.containsKey(LtIncorrectAlias.lookupName(alias)))
+                .map(alias -> LtIncorrectAlias.aliasDefect(alias, xmir, pkg))
+        ).collect(Collectors.toList());
     }
 
     @Override

@@ -20,7 +20,6 @@ import org.cactoos.text.UncheckedText;
 
 /**
  * Object is not unique.
- *
  * @since 0.0.30
  */
 final class LtObjectIsNotUnique implements Lint {
@@ -32,13 +31,11 @@ final class LtObjectIsNotUnique implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        return pkg.values().stream()
-            .flatMap(
-                xmir -> pkg.values().stream()
-                    .filter(oth -> !Objects.equals(oth, xmir))
-                    .flatMap(oth -> this.duplicateDefects(xmir, oth).stream())
-            )
-            .collect(Collectors.toList());
+        return pkg.values().stream().flatMap(
+            xmir -> pkg.values().stream()
+                .filter(oth -> !Objects.equals(oth, xmir))
+                .flatMap(oth -> this.duplicateDefects(xmir, oth).stream())
+        ).collect(Collectors.toList());
     }
 
     @Override
@@ -61,29 +58,26 @@ final class LtObjectIsNotUnique implements Lint {
      * @return Defects found
      */
     private Collection<Defect> duplicateDefects(final XML xmir, final XML oth) {
-        return LtObjectIsNotUnique.sourceObjects(new Xnav(oth.inner())).entrySet().stream()
-            .filter(
-                object -> LtObjectIsNotUnique.containsDuplicate(
-                    new Xnav(xmir.inner()),
-                    new Xnav(oth.inner()),
-                    object.getKey()
-                )
+        return LtObjectIsNotUnique.sourceObjects(new Xnav(oth.inner())).entrySet().stream().filter(
+            object -> LtObjectIsNotUnique.containsDuplicate(
+                new Xnav(xmir.inner()),
+                new Xnav(oth.inner()),
+                object.getKey()
             )
-            .map(
-                (Function<Map.Entry<String, String>, Defect>) object ->
-                    new Defect.Default(
-                        this.name(),
-                        Severity.ERROR,
-                        new ProgramName(oth).get(),
-                        Integer.parseInt(object.getValue()),
-                        String.format(
-                            "The object name \"%s\" is not unique, original object was found in \"%s\"",
-                            object.getKey(),
-                            new ProgramName(xmir).get()
-                        )
+        ).map(
+            (Function<Map.Entry<String, String>, Defect>) object ->
+                new Defect.Default(
+                    this.name(),
+                    Severity.ERROR,
+                    new ProgramName(oth).get(),
+                    Integer.parseInt(object.getValue()),
+                    String.format(
+                        "The object name \"%s\" is not unique, original object was found in \"%s\"",
+                        object.getKey(),
+                        new ProgramName(xmir).get()
                     )
-            )
-            .collect(Collectors.toList());
+                )
+        ).collect(Collectors.toList());
     }
 
     private static boolean containsDuplicate(
@@ -98,17 +92,15 @@ final class LtObjectIsNotUnique implements Lint {
         final List<String> names = xml.path("/object/o/@name")
             .map(oname -> oname.text().get())
             .collect(Collectors.toList());
-        return IntStream.range(0, names.size())
-            .boxed()
-            .collect(
-                Collectors.toMap(
-                    names::get,
-                    pos ->
-                        xml.path(String.format("/object/o[%d]/@line", pos + 1))
-                            .findFirst().flatMap(Xnav::text).orElse("0"),
-                    (existing, replacement) -> replacement
-                )
-            );
+        return IntStream.range(0, names.size()).boxed().collect(
+            Collectors.toMap(
+                names::get,
+                pos ->
+                    xml.path(String.format("/object/o[%d]/@line", pos + 1))
+                        .findFirst().flatMap(Xnav::text).orElse("0"),
+                (existing, replacement) -> replacement
+            )
+        );
     }
 
     private static String packageName(final Xnav xml) {

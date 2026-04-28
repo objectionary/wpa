@@ -20,7 +20,6 @@ import org.cactoos.text.TextOf;
 
 /**
  * Lint for checking `+unlint` meta to suppress non-existing defects in WPA scope.
- *
  * @since 0.0.42
  */
 final class LtUnlintNonExistingDefectWpa implements Lint {
@@ -37,7 +36,6 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     /**
      * Ctor.
-     *
      * @param lnts Lints
      */
     LtUnlintNonExistingDefectWpa(final Iterable<Lint> lnts) {
@@ -46,7 +44,6 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     /**
      * Ctor.
-     *
      * @param lnts Lints
      * @param exld Lint names to exclude
      */
@@ -94,8 +91,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
         return new Xnav(xmir.inner()).path("/object/metas/meta[head='unlint']/tail")
             .map(xnav -> xnav.text().get())
             .distinct()
-            .filter(new DefectMissing(existing.get(xmir), this.excluded)::apply)
-            .flatMap(
+            .filter(new DefectMissing(existing.get(xmir), this.excluded)::apply).flatMap(
                 unlint -> new Xnav(xmir.inner()).path(
                     String.format(
                         "object/metas/meta[head='unlint' and tail='%s']/@line", unlint
@@ -112,13 +108,11 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
                         )
                     )
                 )
-            )
-            .collect(Collectors.toList());
+            ).collect(Collectors.toList());
     }
 
     /**
      * Find existing defects.
-     *
      * @param pkg Program package to scan
      * @return Map of existing defects
      */
@@ -127,8 +121,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
             Collectors.toMap(
                 xml -> xml,
                 xml -> StreamSupport.stream(this.lints.spliterator(), false)
-                    .flatMap(wpl -> LtUnlintNonExistingDefectWpa.defectStream(wpl, pkg))
-                    .collect(
+                    .flatMap(wpl -> LtUnlintNonExistingDefectWpa.defectStream(wpl, pkg)).collect(
                         Collectors.groupingBy(
                             Defect::rule,
                             Collectors.mapping(Defect::line, Collectors.toList())
