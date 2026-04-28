@@ -24,7 +24,7 @@ Add it to your project:
 <dependency>
   <groupId>org.eolang</groupId>
   <artifactId>wpa</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version></version>
 </dependency>
 ```
 
