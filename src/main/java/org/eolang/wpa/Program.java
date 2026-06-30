@@ -114,7 +114,7 @@ public final class Program {
      * @return Program analysis without specifics names
      */
     public Program without(final String... names) {
-        return new org.eolang.wpa.Program(this.pkg, new WpaWithout(names));
+        return new Program(this.pkg, new WpaWithout(names));
     }
 
     /**

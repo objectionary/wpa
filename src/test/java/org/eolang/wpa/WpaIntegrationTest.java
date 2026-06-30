@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 import matchers.DefectMatcher;
 import org.eolang.parser.EoSyntax;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 final class WpaIntegrationTest {
 
     @Test
+    @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void analyzesMultipleFoldersAndFiles(@Mktmp final Path tmp) throws IOException {
         final Path io = tmp.resolve("io");
         final Path txt = tmp.resolve("txt");
@@ -46,6 +49,7 @@ final class WpaIntegrationTest {
     }
 
     @Test
+    @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void detectsInconsistentArgsAcrossFolders(@Mktmp final Path tmp) throws IOException {
         final Path lib = tmp.resolve("lib");
         final Path app = tmp.resolve("app");
@@ -91,6 +95,7 @@ final class WpaIntegrationTest {
     }
 
     @Test
+    @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void findsNoInconsistencyInConsistentPackage(@Mktmp final Path tmp) throws IOException {
         final Path pkg = tmp.resolve("consistent");
         this.file(
