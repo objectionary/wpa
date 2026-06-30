@@ -120,7 +120,8 @@ public final class Program {
     /**
      * Find all possible defects in the EO program.
      * @return All defects found
-     * @see <a href="https://news.eolang.org/2022-11-25-xmir-guide.html">XMIR guide</a>
+     * @see <a href="https://news.eolang.org/2022-11-25-xmir-guide.html">
+     *  XMIR guide</a>
      * @see <a href="https://www.eolang.org/XMIR.html">XMIR specification</a>
      * @see <a href="https://www.eolang.org/XMIR.xsd">XMIR schema</a>
      */
@@ -132,7 +133,7 @@ public final class Program {
             } catch (final IOException exception) {
                 throw new IllegalStateException(
                     String.format(
-                        "Failed to find defects in the '%s' package with '%s' lint",
+                        "Failed to find defects in '%s' package with '%s' lint",
                         this.pkg,
                         lint
                     ),
@@ -149,7 +150,9 @@ public final class Program {
      * @return Map of XMIR files
      * @throws IOException If fails
      */
-    private static Map<String, XML> discover(final Iterable<Path> dirs) throws IOException {
+    private static Map<String, XML> discover(
+        final Iterable<Path> dirs
+    ) throws IOException {
         final Map<String, XML> map = new HashMap<>(0);
         for (final Path dir : dirs) {
             map.putAll(Program.discover(dir));
@@ -163,7 +166,8 @@ public final class Program {
      * @return Map of XMIR files
      * @throws IOException If fails
      */
-    private static Map<String, XML> discover(final Path dir) throws IOException {
+    private static Map<String, XML> discover(final Path dir)
+        throws IOException {
         final Map<String, XML> map = new HashMap<>(0);
         Files.walkFileTree(
             dir,
@@ -173,7 +177,10 @@ public final class Program {
                     final Path file, final BasicFileAttributes attrs
                 ) {
                     try {
-                        map.put(new XmirKey(file, dir).asString(), new XMLDocument(file));
+                        map.put(
+                            new XmirKey(file, dir).asString(),
+                            new XMLDocument(file)
+                        );
                     } catch (final FileNotFoundException ex) {
                         throw new IllegalArgumentException(ex);
                     }

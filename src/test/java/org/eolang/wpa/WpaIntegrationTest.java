@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Integration tests for {@link Program} with realistic multi-package directory structures.
+ * @since 0.1.0
  * @todo #27:60min Re-enable the incorrect-alias lint in integration tests once its
  *  performance is fixed. Remove it from the .without() calls in this test class.
  *  The lint is currently too slow because it is called once per source file.
@@ -37,7 +38,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
  * @todo #27:60min Re-enable the incorrect-number-of-attributes lint in integration
  *  tests once its performance is fixed. Remove it from the .without() calls in
  *  this test class. The lint recomputes object definitions once per source file.
- * @since 0.1.0
  */
 @ExtendWith(MktmpResolver.class)
 final class WpaIntegrationTest {
@@ -45,29 +45,27 @@ final class WpaIntegrationTest {
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void analyzesMultipleFoldersAndFiles(@Mktmp final Path tmp) throws IOException {
-        final Path io = tmp.resolve("io");
+        final Path iod = tmp.resolve("io");
         final Path txt = tmp.resolve("txt");
         final Path math = tmp.resolve("math");
-        this.file(io, "input.xmir", "# Input.\n[size] > input");
-        this.file(io, "output.xmir", "# Output.\n[data] > output");
-        this.file(io, "reader.xmir", "# Reader.\n[source] > reader");
-        this.file(txt, "text.xmir", "# Text.\n[raw] > text");
-        this.file(txt, "lines.xmir", "# Lines.\n[content] > lines");
-        this.file(txt, "chars.xmir", "# Chars.\n[str] > chars");
-        this.file(math, "num.xmir", "# Num.\n[value] > num");
-        this.file(math, "add.xmir", "# Add.\n[left right] > add");
-        this.file(math, "max.xmir", "# Max.\n[first second] > max");
+        this.file(iod, "input.xmir", "# Input.", "[size] > input");
+        this.file(iod, "output.xmir", "# Output.", "[data] > output");
+        this.file(iod, "reader.xmir", "# Reader.", "[source] > reader");
+        this.file(txt, "text.xmir", "# Text.", "[raw] > text");
+        this.file(txt, "lines.xmir", "# Lines.", "[content] > lines");
+        this.file(txt, "chars.xmir", "# Chars.", "[str] > chars");
+        this.file(math, "num.xmir", "# Num.", "[value] > num");
+        this.file(math, "add.xmir", "# Add.", "[left right] > add");
+        this.file(math, "max.xmir", "# Max.", "[first second] > max");
         MatcherAssert.assertThat(
             "WPA analysis over multiple folders must produce valid defects only",
-            new Program(io, txt, math)
-                .without(
-                    "incorrect-alias",
-                    "object-is-not-unique",
-                    "atom-is-not-unique",
-                    "inconsistent-args",
-                    "incorrect-number-of-attributes"
-                )
-                .defects(),
+            new Program(iod, txt, math).without(
+                "incorrect-alias",
+                "object-is-not-unique",
+                "atom-is-not-unique",
+                "inconsistent-args",
+                "incorrect-number-of-attributes"
+            ).defects(),
             Matchers.everyItem(new DefectMatcher())
         );
     }
@@ -79,34 +77,16 @@ final class WpaIntegrationTest {
         final Path lib = tmp.resolve("lib");
         final Path app = tmp.resolve("app");
         this.file(
-            lib,
-            "util.xmir",
-            String.join(
-                System.lineSeparator(),
-                "# Util.",
-                "[] > util",
-                "  helper 1 2 > result"
-            )
+            lib, "util.xmir",
+            "# Util.", "[] > util", "  helper 1 2 > result"
         );
         this.file(
-            lib,
-            "core.xmir",
-            String.join(
-                System.lineSeparator(),
-                "# Core.",
-                "[] > core",
-                "  helper 1 2 3 > result"
-            )
+            lib, "core.xmir",
+            "# Core.", "[] > core", "  helper 1 2 3 > result"
         );
         this.file(
-            app,
-            "main.xmir",
-            String.join(
-                System.lineSeparator(),
-                "# Main.",
-                "[] > main",
-                "  helper 42 > x"
-            )
+            app, "main.xmir",
+            "# Main.", "[] > main", "  helper 42 > x"
         );
         MatcherAssert.assertThat(
             "Inconsistent args across folders must be detected",
@@ -123,56 +103,32 @@ final class WpaIntegrationTest {
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void findsNoInconsistencyInConsistentPackage(@Mktmp final Path tmp) throws IOException {
         final Path pkg = tmp.resolve("consistent");
-        this.file(
-            pkg,
-            "foo.xmir",
-            String.join(
-                System.lineSeparator(),
-                "# Foo.",
-                "[a] > foo"
-            )
-        );
-        this.file(
-            pkg,
-            "bar.xmir",
-            String.join(
-                System.lineSeparator(),
-                "# Bar.",
-                "[] > bar",
-                "  foo 1 > x"
-            )
-        );
-        this.file(
-            pkg,
-            "baz.xmir",
-            String.join(
-                System.lineSeparator(),
-                "# Baz.",
-                "[] > baz",
-                "  foo 2 > y"
-            )
-        );
+        this.file(pkg, "foo.xmir", "# Foo.", "[a] > foo");
+        this.file(pkg, "bar.xmir", "# Bar.", "[] > bar", "  foo 1 > x");
+        this.file(pkg, "baz.xmir", "# Baz.", "[] > baz", "  foo 2 > y");
         MatcherAssert.assertThat(
             "Consistent package must produce no defects with fast lints",
-            new Program(pkg)
-                .without(
-                    "incorrect-alias",
-                    "object-is-not-unique",
-                    "atom-is-not-unique",
-                    "inconsistent-args",
-                    "incorrect-number-of-attributes"
-                )
-                .defects(),
+            new Program(pkg).without(
+                "incorrect-alias",
+                "object-is-not-unique",
+                "atom-is-not-unique",
+                "inconsistent-args",
+                "incorrect-number-of-attributes"
+            ).defects(),
             Matchers.emptyIterable()
         );
     }
 
-    private void file(final Path dir, final String name, final String eo) throws IOException {
+    private void file(
+        final Path dir, final String name, final String... lines
+    ) throws IOException {
         final Path path = dir.resolve(name);
         path.toFile().getParentFile().mkdirs();
         Files.write(
             path,
-            new EoSyntax(eo).parsed().toString().getBytes(StandardCharsets.UTF_8)
+            new EoSyntax(
+                String.join(System.lineSeparator(), lines)
+            ).parsed().toString().getBytes(StandardCharsets.UTF_8)
         );
     }
 }
