@@ -40,6 +40,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  *  this test class. The lint recomputes object definitions once per source file.
  */
 @ExtendWith(MktmpResolver.class)
+@SuppressWarnings("JTCOP.RuleEveryTestHasProductionClass")
 final class WpaIntegrationTest {
 
     @Test
