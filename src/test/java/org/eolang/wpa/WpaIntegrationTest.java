@@ -22,17 +22,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Integration tests for {@link Program} with realistic multi-package directory structures.
+ * @todo #27:60min Re-enable the incorrect-alias lint in integration tests once its
+ *  performance is fixed. Remove it from the .without() calls in this test class.
+ *  The lint is currently too slow because it is called once per source file.
+ * @todo #27:60min Re-enable the object-is-not-unique lint in integration tests once
+ *  its performance is fixed. Remove it from the .without() calls in this test class.
+ *  The lint is currently too slow because it is called once per source file.
+ * @todo #27:60min Re-enable the atom-is-not-unique lint in integration tests once
+ *  its performance is fixed. Remove it from the .without() calls in this test class.
+ *  The lint is currently too slow because it is called once per source file.
+ * @todo #27:60min Re-enable the inconsistent-args lint in integration tests once its
+ *  performance is fixed. Remove it from the .without() calls and re-enable the
+ *  detectsInconsistentArgsAcrossFolders test. The lint has O(n^2) performance issue.
+ * @todo #27:60min Re-enable the incorrect-number-of-attributes lint in integration
+ *  tests once its performance is fixed. Remove it from the .without() calls in
+ *  this test class. The lint recomputes object definitions once per source file.
  * @since 0.1.0
  */
 @ExtendWith(MktmpResolver.class)
 final class WpaIntegrationTest {
 
-    /**
-     * @todo #27:30min Enable all WPA lints in this integration test.
-     *  All lints are currently disabled because they time out on packages
-     *  of even a few EO files. Once performance is fixed, remove the
-     *  .without() call below.
-     */
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void analyzesMultipleFoldersAndFiles(@Mktmp final Path tmp) throws IOException {
@@ -63,11 +72,6 @@ final class WpaIntegrationTest {
         );
     }
 
-    /**
-     * @todo #27:30min Re-enable this test after fixing the performance of
-     *  the inconsistent-args lint. The lint times out even on a small
-     *  package, so the test is temporarily disabled to keep CI fast.
-     */
     @Test
     @Disabled("inconsistent-args is too slow, see #27")
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
@@ -115,12 +119,6 @@ final class WpaIntegrationTest {
         );
     }
 
-    /**
-     * @todo #27:30min Enable all WPA lints in this integration test.
-     *  All lints are currently disabled because they time out on packages
-     *  of even a few EO files. Once performance is fixed, remove the
-     *  .without() call below.
-     */
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void findsNoInconsistencyInConsistentPackage(@Mktmp final Path tmp) throws IOException {
