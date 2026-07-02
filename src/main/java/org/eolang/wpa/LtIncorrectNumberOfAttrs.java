@@ -29,12 +29,9 @@ final class LtIncorrectNumberOfAttrs implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) throws IOException {
+        final Map<String, Integer> definitions = LtIncorrectNumberOfAttrs.objectDefinitions(pkg);
         return pkg.entrySet().stream().flatMap(
-            entry -> this.sourceDefects(
-                entry.getKey(),
-                entry.getValue(),
-                LtIncorrectNumberOfAttrs.objectDefinitions(pkg)
-            ).stream()
+            entry -> this.sourceDefects(entry.getKey(), entry.getValue(), definitions).stream()
         ).collect(Collectors.toList());
     }
 
