@@ -29,10 +29,7 @@ final class LtIncorrectNumberOfAttrs implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) throws IOException {
-        final Map<String, Integer> definitions = LtIncorrectNumberOfAttrs.objectDefinitions(pkg);
-        return pkg.entrySet().stream().flatMap(
-            entry -> this.sourceDefects(entry.getKey(), entry.getValue(), definitions).stream()
-        ).collect(Collectors.toList());
+        return this.packageDefects(pkg, LtIncorrectNumberOfAttrs.objectDefinitions(pkg));
     }
 
     @Override
@@ -46,6 +43,21 @@ final class LtIncorrectNumberOfAttrs implements Lint {
                 )
             )
         ).asString();
+    }
+
+    /**
+     * Find defects across all sources using precomputed object definitions.
+     * @param pkg Program package
+     * @param definitions Precomputed object definitions
+     * @return Defects found
+     */
+    private Collection<Defect> packageDefects(
+        final Map<String, XML> pkg,
+        final Map<String, Integer> definitions
+    ) {
+        return pkg.entrySet().stream().flatMap(
+            entry -> this.sourceDefects(entry.getKey(), entry.getValue(), definitions).stream()
+        ).collect(Collectors.toList());
     }
 
     /**

@@ -61,10 +61,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        final Map<String, List<Integer>> existing = this.existingDefects(pkg);
-        return pkg.values().stream()
-            .flatMap(xmir -> this.sourceDefects(xmir, existing).stream())
-            .collect(Collectors.toList());
+        return this.packageDefects(pkg, this.existingDefects(pkg));
     }
 
     @Override
@@ -78,6 +75,20 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
                 )
             )
         ).asString();
+    }
+
+    /**
+     * Find defects across all sources using precomputed existing defects.
+     * @param pkg Program package
+     * @param existing Precomputed existing defects grouped by rule name
+     * @return Defects found
+     */
+    private Collection<Defect> packageDefects(
+        final Map<String, XML> pkg, final Map<String, List<Integer>> existing
+    ) {
+        return pkg.values().stream()
+            .flatMap(xmir -> this.sourceDefects(xmir, existing).stream())
+            .collect(Collectors.toList());
     }
 
     /**
@@ -119,8 +130,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
      */
     private Map<String, List<Integer>> existingDefects(final Map<String, XML> pkg) {
         return StreamSupport.stream(this.lints.spliterator(), false)
-            .flatMap(wpl -> LtUnlintNonExistingDefectWpa.defectStream(wpl, pkg))
-            .collect(
+            .flatMap(wpl -> LtUnlintNonExistingDefectWpa.defectStream(wpl, pkg)).collect(
                 Collectors.groupingBy(
                     Defect::rule,
                     Collectors.mapping(Defect::line, Collectors.toList())
