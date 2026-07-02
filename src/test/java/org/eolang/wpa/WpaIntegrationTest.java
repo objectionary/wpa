@@ -23,9 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 /**
  * Integration tests for {@link Program} with realistic multi-package directory structures.
  * @since 0.1.0
- * @todo #27:60min Re-enable the incorrect-alias lint in integration tests once its
- *  performance is fixed. Remove it from the .without() calls in this test class.
- *  The lint is currently too slow because it is called once per source file.
  * @todo #27:60min Re-enable the object-is-not-unique lint in integration tests once
  *  its performance is fixed. Remove it from the .without() calls in this test class.
  *  The lint is currently too slow because it is called once per source file.
@@ -61,7 +58,6 @@ final class WpaIntegrationTest {
         MatcherAssert.assertThat(
             "WPA analysis over multiple folders must produce valid defects only",
             new Program(iod, txt, math).without(
-                "incorrect-alias",
                 "object-is-not-unique",
                 "atom-is-not-unique",
                 "inconsistent-args",
@@ -110,7 +106,6 @@ final class WpaIntegrationTest {
         MatcherAssert.assertThat(
             "Consistent package must produce no defects with fast lints",
             new Program(pkg).without(
-                "incorrect-alias",
                 "object-is-not-unique",
                 "atom-is-not-unique",
                 "inconsistent-args",
