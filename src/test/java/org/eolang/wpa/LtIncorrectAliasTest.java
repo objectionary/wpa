@@ -11,6 +11,10 @@ import com.yegor256.MktmpResolver;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import matchers.DefectMatcher;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.map.MapEntry;
@@ -19,6 +23,7 @@ import org.eolang.parser.EoSyntax;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -160,6 +165,24 @@ final class LtIncorrectAliasTest {
         MatcherAssert.assertThat(
             "Defects are not empty, but should be",
             new Program(dir).defects(),
+            Matchers.emptyIterable()
+        );
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void findsNoIncorrectAliasInLargePackage() throws Exception {
+        final int count = 30;
+        final Map<String, XML> pkg = new HashMap<>(count);
+        IntStream.range(0, count).forEach(
+            idx -> pkg.put(
+                String.format("obj%d", idx),
+                new XMLDocument(String.format("<object><o name='obj%d'/></object>", idx))
+            )
+        );
+        MatcherAssert.assertThat(
+            "Large package with no aliases must produce no incorrect-alias defects within timeout",
+            new LtIncorrectAlias().defects(pkg),
             Matchers.emptyIterable()
         );
     }
