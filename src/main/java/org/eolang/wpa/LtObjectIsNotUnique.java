@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
@@ -34,11 +35,11 @@ final class LtObjectIsNotUnique implements Lint {
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
         return pkg.values().stream()
-            .map(SourceObject::of)
-            .collect(Collectors.groupingBy(SourceObject::key))
+            .map(LtObjectIsNotUnique.SourceObject::from)
+            .collect(Collectors.groupingBy(LtObjectIsNotUnique.SourceObject::key))
             .values().stream()
             .filter(group -> group.size() > 1)
-            .flatMap(group -> this.defects(group).stream())
+            .flatMap(group -> LtObjectIsNotUnique.defects(group).stream())
             .collect(Collectors.toList());
     }
 
@@ -60,11 +61,13 @@ final class LtObjectIsNotUnique implements Lint {
      * @param group Sources with duplicate object names
      * @return Defects found
      */
-    private Collection<Defect> defects(final List<SourceObject> group) {
-        return group.stream().flatMap(
-            entry -> group.stream()
-                .filter(other -> other != entry)
-                .map(entry::defect)
+    private static Collection<Defect> defects(
+        final List<LtObjectIsNotUnique.SourceObject> group
+    ) {
+        return IntStream.range(0, group.size()).boxed().flatMap(
+            idx -> IntStream.range(0, group.size())
+                .filter(other -> other != idx)
+                .mapToObj(other -> group.get(idx).defect(group.get(other)))
         ).collect(Collectors.toList());
     }
 
@@ -94,14 +97,7 @@ final class LtObjectIsNotUnique implements Lint {
          */
         private final XML source;
 
-        /**
-         * Ctor.
-         * @param pkg Package name
-         * @param name Object name
-         * @param line Line number
-         * @param source Source XML
-         * @checkstyle ParameterNumberCheck (5 lines)
-         */
+        // @checkstyle ParameterNumberCheck (5 lines)
         private SourceObject(
             final String pkg, final String name, final int line, final XML source
         ) {
@@ -132,7 +128,7 @@ final class LtObjectIsNotUnique implements Lint {
          * @param original The source where the object was originally defined
          * @return Defect
          */
-        private Defect defect(final SourceObject original) {
+        private Defect defect(final LtObjectIsNotUnique.SourceObject original) {
             return new Defect.Default(
                 LtObjectIsNotUnique.NAME,
                 Severity.ERROR,
@@ -151,9 +147,9 @@ final class LtObjectIsNotUnique implements Lint {
          * @param xmir Source XMIR
          * @return SourceObject
          */
-        private static SourceObject of(final XML xmir) {
+        private static LtObjectIsNotUnique.SourceObject from(final XML xmir) {
             final Xnav xml = new Xnav(xmir.inner());
-            return new SourceObject(
+            return new LtObjectIsNotUnique.SourceObject(
                 xml.path("/object/metas/meta[head='package']/tail")
                     .findFirst()
                     .flatMap(Xnav::text)

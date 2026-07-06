@@ -27,7 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  *  its performance is fixed. Remove it from the .without() calls in this test class.
  *  The lint is currently too slow because it is called once per source file.
  * @todo #27:60min Re-enable the inconsistent-args lint in integration tests once its
-*  performance is fixed. Remove it from the .without() calls and re-enable the
+ *  performance is fixed. Remove it from the .without() calls and re-enable the
  *  detectsInconsistentArgsAcrossFolders test. The lint has O(n^2) performance issue.
  * @todo #27:60min Re-enable the incorrect-number-of-attributes lint in integration
  *  tests once its performance is fixed. Remove it from the .without() calls in
