@@ -155,12 +155,17 @@ final class LtIncorrectAliasTest {
             ).parsed().toString().getBytes(StandardCharsets.UTF_8)
         );
         Files.createDirectory(dir.resolve("ttt"));
-        final String source = "<object><o name='src'/></object>";
-        Files.write(dir.resolve("ttt/foo.xmir"), source.getBytes(StandardCharsets.UTF_8));
-        Files.write(dir.resolve("bar-tests.xmir"), source.getBytes(StandardCharsets.UTF_8));
+        Files.write(
+            dir.resolve("ttt/foo.xmir"),
+            "<object><o name='foo'/></object>".getBytes(StandardCharsets.UTF_8)
+        );
+        Files.write(
+            dir.resolve("bar-tests.xmir"),
+            "<object><o name='bar-tests'/></object>".getBytes(StandardCharsets.UTF_8)
+        );
         Files.write(
             dir.resolve("ttt/foo-tests.xmir"),
-            source.getBytes(StandardCharsets.UTF_8)
+            "<object><o name='foo-tests'/></object>".getBytes(StandardCharsets.UTF_8)
         );
         MatcherAssert.assertThat(
             "Defects are not empty, but should be",
@@ -204,10 +209,9 @@ final class LtIncorrectAliasTest {
                 )
             ).parsed().toString().getBytes(StandardCharsets.UTF_8)
         );
-        final String source = "<object><o name='src'/></object>";
         Files.write(
             dir.resolve("main-tests.xmir"),
-            source.getBytes(StandardCharsets.UTF_8)
+            "<object><o name='main-tests'/></object>".getBytes(StandardCharsets.UTF_8)
         );
         Files.createDirectory(
             Files.createDirectory(
@@ -218,11 +222,11 @@ final class LtIncorrectAliasTest {
         );
         Files.write(
             dir.resolve("org/eolang/io/stdout.xmir"),
-            source.getBytes(StandardCharsets.UTF_8)
+            "<object><o name='stdout'/></object>".getBytes(StandardCharsets.UTF_8)
         );
         Files.write(
             dir.resolve("org/eolang/io/stdout-tests.xmir"),
-            source.getBytes(StandardCharsets.UTF_8)
+            "<object><o name='stdout-tests'/></object>".getBytes(StandardCharsets.UTF_8)
         );
         MatcherAssert.assertThat(
             "Defects are not empty, but should be",
