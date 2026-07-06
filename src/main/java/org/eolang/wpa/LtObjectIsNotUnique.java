@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
@@ -31,11 +28,13 @@ final class LtObjectIsNotUnique implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        return pkg.values().stream().flatMap(
-            xmir -> pkg.values().stream()
-                .filter(oth -> !Objects.equals(oth, xmir))
-                .flatMap(oth -> this.duplicateDefects(xmir, oth).stream())
-        ).collect(Collectors.toList());
+        return pkg.values().stream()
+            .map(SourceObject::of)
+            .collect(Collectors.groupingBy(SourceObject::key))
+            .values().stream()
+            .filter(group -> group.size() > 1)
+            .flatMap(group -> this.groupDefects(group).stream())
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -52,66 +51,113 @@ final class LtObjectIsNotUnique implements Lint {
     }
 
     /**
-     * Find duplicate defects between two sources.
-     * @param xmir Original source
-     * @param oth Other source
+     * Create defects for a group of sources with the same object name in the same package.
+     * @param group Sources with duplicate object names
      * @return Defects found
      */
-    private Collection<Defect> duplicateDefects(final XML xmir, final XML oth) {
-        return LtObjectIsNotUnique.sourceObjects(new Xnav(oth.inner())).entrySet().stream().filter(
-            object -> LtObjectIsNotUnique.containsDuplicate(
-                new Xnav(xmir.inner()),
-                new Xnav(oth.inner()),
-                object.getKey()
-            )
-        ).map(
-            (Function<Map.Entry<String, String>, Defect>) object ->
-                new Defect.Default(
-                    this.name(),
-                    Severity.ERROR,
-                    new ProgramName(oth).get(),
-                    Integer.parseInt(object.getValue()),
-                    String.format(
-                        "The object name \"%s\" is not unique, original object was found in \"%s\"",
-                        object.getKey(),
-                        new ProgramName(xmir).get()
-                    )
-                )
+    private Collection<Defect> groupDefects(final List<SourceObject> group) {
+        return group.stream().flatMap(
+            entry -> group.stream()
+                .filter(other -> other != entry)
+                .map(other -> this.singleDefect(entry, other))
         ).collect(Collectors.toList());
     }
 
-    private static boolean containsDuplicate(
-        final Xnav original, final Xnav oth, final String name
-    ) {
-        return LtObjectIsNotUnique.sourceObjects(original).containsKey(name)
-            && LtObjectIsNotUnique.packageName(oth)
-            .equals(LtObjectIsNotUnique.packageName(original));
-    }
-
-    private static Map<String, String> sourceObjects(final Xnav xml) {
-        final List<String> names = xml.path("/object/o/@name")
-            .map(oname -> oname.text().get())
-            .collect(Collectors.toList());
-        return IntStream.range(0, names.size()).boxed().collect(
-            Collectors.toMap(
-                names::get,
-                pos ->
-                    xml.path(String.format("/object/o[%d]/@line", pos + 1))
-                        .findFirst().flatMap(Xnav::text).orElse("0"),
-                (existing, replacement) -> replacement
+    /**
+     * Create a defect for one duplicate entry pointing to its original.
+     * @param entry The source that has a duplicate object name
+     * @param original The source where the object was originally defined
+     * @return Defect
+     */
+    private Defect singleDefect(final SourceObject entry, final SourceObject original) {
+        return new Defect.Default(
+            this.name(),
+            Severity.ERROR,
+            new ProgramName(entry.source).get(),
+            entry.line,
+            String.format(
+                "The object name \"%s\" is not unique, original object was found in \"%s\"",
+                entry.name,
+                new ProgramName(original.source).get()
             )
         );
     }
 
-    private static String packageName(final Xnav xml) {
-        final String name;
-        if (
-            xml.path("/object/metas/meta[head='package']").count() == 1L
+    /**
+     * Top-level object extracted from a single XMIR source file.
+     * @since 0.0.30
+     */
+    private static final class SourceObject {
+
+        /**
+         * Package name, empty string if no package is defined.
+         */
+        private final String pkg;
+
+        /**
+         * Top-level object name.
+         */
+        private final String name;
+
+        /**
+         * Line number of the object definition.
+         */
+        private final int line;
+
+        /**
+         * Source XML for program name resolution via {@link ProgramName}.
+         */
+        private final XML source;
+
+        /**
+         * Ctor.
+         * @param pkg Package name
+         * @param name Object name
+         * @param line Line number
+         * @param source Source XML
+         * @checkstyle ParameterNumberCheck (5 lines)
+         */
+        private SourceObject(
+            final String pkg, final String name, final int line, final XML source
         ) {
-            name = xml.one("/object/metas/meta[head='package']/tail").text().get();
-        } else {
-            name = "";
+            this.pkg = pkg;
+            this.name = name;
+            this.line = line;
+            this.source = source;
         }
-        return name;
+
+        /**
+         * Grouping key combining package and object name.
+         * @return Key as a list of two strings
+         */
+        private List<String> key() {
+            return List.of(this.pkg, this.name);
+        }
+
+        /**
+         * Build a SourceObject by extracting fields from an XMIR file.
+         * @param xmir Source XMIR
+         * @return SourceObject
+         */
+        private static SourceObject of(final XML xmir) {
+            final Xnav xml = new Xnav(xmir.inner());
+            return new SourceObject(
+                xml.path("/object/metas/meta[head='package']/tail")
+                    .findFirst()
+                    .flatMap(Xnav::text)
+                    .orElse(""),
+                xml.path("/object/o/@name")
+                    .findFirst()
+                    .flatMap(Xnav::text)
+                    .orElse(""),
+                Integer.parseInt(
+                    xml.path("/object/o/@line")
+                        .findFirst()
+                        .flatMap(Xnav::text)
+                        .orElse("0")
+                ),
+                xmir
+            );
+        }
     }
 }
