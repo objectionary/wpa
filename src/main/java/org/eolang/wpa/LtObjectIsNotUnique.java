@@ -21,9 +21,14 @@ import org.cactoos.text.UncheckedText;
  */
 final class LtObjectIsNotUnique implements Lint {
 
+    /**
+     * Lint name.
+     */
+    private static final String NAME = "object-is-not-unique";
+
     @Override
     public String name() {
-        return "object-is-not-unique";
+        return LtObjectIsNotUnique.NAME;
     }
 
     @Override
@@ -33,7 +38,7 @@ final class LtObjectIsNotUnique implements Lint {
             .collect(Collectors.groupingBy(SourceObject::key))
             .values().stream()
             .filter(group -> group.size() > 1)
-            .flatMap(group -> this.groupDefects(group).stream())
+            .flatMap(group -> this.defects(group).stream())
             .collect(Collectors.toList());
     }
 
@@ -55,32 +60,12 @@ final class LtObjectIsNotUnique implements Lint {
      * @param group Sources with duplicate object names
      * @return Defects found
      */
-    private Collection<Defect> groupDefects(final List<SourceObject> group) {
+    private Collection<Defect> defects(final List<SourceObject> group) {
         return group.stream().flatMap(
             entry -> group.stream()
                 .filter(other -> other != entry)
-                .map(other -> this.singleDefect(entry, other))
+                .map(entry::defect)
         ).collect(Collectors.toList());
-    }
-
-    /**
-     * Create a defect for one duplicate entry pointing to its original.
-     * @param entry The source that has a duplicate object name
-     * @param original The source where the object was originally defined
-     * @return Defect
-     */
-    private Defect singleDefect(final SourceObject entry, final SourceObject original) {
-        return new Defect.Default(
-            this.name(),
-            Severity.ERROR,
-            new ProgramName(entry.source).get(),
-            entry.line,
-            String.format(
-                "The object name \"%s\" is not unique, original object was found in \"%s\"",
-                entry.name,
-                new ProgramName(original.source).get()
-            )
-        );
     }
 
     /**
@@ -132,6 +117,33 @@ final class LtObjectIsNotUnique implements Lint {
          */
         private List<String> key() {
             return List.of(this.pkg, this.name);
+        }
+
+        /**
+         * Program name for use in defect messages.
+         * @return Program name
+         */
+        private String programName() {
+            return new ProgramName(this.source).get();
+        }
+
+        /**
+         * Create a defect reporting this object as a duplicate of the original.
+         * @param original The source where the object was originally defined
+         * @return Defect
+         */
+        private Defect defect(final SourceObject original) {
+            return new Defect.Default(
+                LtObjectIsNotUnique.NAME,
+                Severity.ERROR,
+                this.programName(),
+                this.line,
+                String.format(
+                    "The object name \"%s\" is not unique, original object was found in \"%s\"",
+                    this.name,
+                    original.programName()
+                )
+            );
         }
 
         /**
