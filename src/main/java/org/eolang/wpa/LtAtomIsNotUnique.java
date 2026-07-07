@@ -146,7 +146,7 @@ final class LtAtomIsNotUnique implements Lint {
         /**
          * Fully qualified name of the atom.
          */
-        private final String atomFqn;
+        private final String atomfqn;
 
         /**
          * Line number of the atom in the source.
@@ -157,13 +157,13 @@ final class LtAtomIsNotUnique implements Lint {
          * Ctor.
          * @param src Transformed XMIR source
          * @param fqn Fully qualified atom name
-         * @param ln Line number
+         * @param lno Line number
          * @checkstyle ParameterNumberCheck (5 lines)
          */
-        AtomOccurrence(final Xnav src, final String fqn, final int ln) {
+        AtomOccurrence(final Xnav src, final String fqn, final int lno) {
             this.source = src;
-            this.atomFqn = fqn;
-            this.line = ln;
+            this.atomfqn = fqn;
+            this.line = lno;
         }
 
         /**
@@ -171,7 +171,7 @@ final class LtAtomIsNotUnique implements Lint {
          * @return FQN string
          */
         String fqn() {
-            return this.atomFqn;
+            return this.atomfqn;
         }
 
         /**
@@ -187,7 +187,7 @@ final class LtAtomIsNotUnique implements Lint {
                 this.line,
                 String.format(
                     "Atom with FQN \"%s\" is duplicated, original was found in \"%s\"",
-                    this.atomFqn,
+                    this.atomfqn,
                     new ProgramName(new XMLDocument(original.source.node())).get()
                 )
             );
