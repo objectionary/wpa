@@ -10,17 +10,14 @@ import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import com.jcabi.xml.XSL;
 import com.jcabi.xml.XSLDocument;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.io.UncheckedInput;
-import org.cactoos.list.ListOf;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
 
@@ -66,14 +63,15 @@ final class LtAtomIsNotUnique implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        final Map<Xnav, List<String>> index = pkg.values().stream()
+        return pkg.values().stream()
             .map(this.pre::transform)
             .map(xmir -> new Xnav(xmir.inner()))
-            .collect(Collectors.toMap(Function.identity(), LtAtomIsNotUnique::fqns));
-        return Stream.concat(
-            this.duplicateDefects(index),
-            this.sharedDefects(index)
-        ).collect(Collectors.toList());
+            .flatMap(LtAtomIsNotUnique::occurrences)
+            .collect(Collectors.groupingBy(LtAtomIsNotUnique.AtomOccurrence::fqn))
+            .values().stream()
+            .filter(group -> group.size() > 1)
+            .flatMap(group -> LtAtomIsNotUnique.groupDefects(group).stream())
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -90,122 +88,109 @@ final class LtAtomIsNotUnique implements Lint {
     }
 
     /**
-     * Find duplicate defects within single source.
-     * @param index Index of FQNs by source
-     * @return Stream of defects
+     * Create defects for a group of occurrences that share the same atom FQN.
+     * @param group Occurrences with the same FQN
+     * @return Defects
      */
-    private Stream<Defect> duplicateDefects(final Map<Xnav, List<String>> index) {
-        return index.entrySet().stream().flatMap(
-            entry -> entry.getValue().stream()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet()
-                .stream()
-                .filter(e -> e.getValue() > 1L).flatMap(
-                    e -> IntStream.range(0, Math.toIntExact(e.getValue()))
-                        .mapToObj(pos -> this.singleDefect(entry.getKey(), e.getKey(), pos))
-                )
-        );
-    }
-
-    /**
-     * Find shared defects between sources.
-     * @param index Index of FQNs by source
-     * @return Stream of defects
-     */
-    private Stream<Defect> sharedDefects(final Map<Xnav, List<String>> index) {
-        final List<Map.Entry<Xnav, List<String>>> entries = new ArrayList<>(index.entrySet());
-        return IntStream.range(0, entries.size())
-            .boxed().flatMap(
-                first -> IntStream.range(first + 1, entries.size()).mapToObj(
-                    second -> this.sharedBetween(entries.get(first), entries.get(second))
-                ).flatMap(Function.identity())
-            );
-    }
-
-    /**
-     * Build defects for the pair of sources that share atom FQNs.
-     * @param first One source entry (FQNs mapped from an Xnav)
-     * @param second Another source entry
-     * @return Stream of shared defects
-     */
-    private Stream<Defect> sharedBetween(
-        final Map.Entry<Xnav, List<String>> first,
-        final Map.Entry<Xnav, List<String>> second
+    private static Collection<Defect> groupDefects(
+        final List<LtAtomIsNotUnique.AtomOccurrence> group
     ) {
-        return second.getValue().stream()
-            .filter(first.getValue()::contains).flatMap(
-                aname -> Stream.of(
-                    this.sharedDefect(second.getKey(), first.getKey(), aname),
-                    this.sharedDefect(first.getKey(), second.getKey(), aname)
-                )
-            );
+        return IntStream.range(0, group.size()).boxed().flatMap(
+            idx -> IntStream.range(0, group.size())
+                .filter(other -> other != idx)
+                .mapToObj(other -> group.get(idx).defect(group.get(other)))
+        ).collect(Collectors.toList());
     }
 
-    private Defect singleDefect(final Xnav xml, final String fqn, final int pos) {
-        return new Defect.Default(
-            this.name(),
-            Severity.ERROR,
-            new ProgramName(new XMLDocument(xml.node())).get(),
-            Integer.parseInt(
-                xml.path(
-                    String.format("//o[@name='%s' and o[@name='λ']]", LtAtomIsNotUnique.oname(fqn))
-                    )
-                    .map(o -> o.attribute("line").text().get())
-                    .collect(Collectors.toList()).get(pos)
-            ),
-            String.format("Atom \"%s\" is duplicated", fqn)
-        );
-    }
-
-    private Defect sharedDefect(final Xnav xml, final Xnav original, final String fqn) {
-        return new Defect.Default(
-            this.name(),
-            Severity.ERROR,
-            new ProgramName(new XMLDocument(xml.node())).get(),
-            Integer.parseInt(
-                xml.path(
-                    String.format("//o[@name='%s' and o[@name='λ']]", LtAtomIsNotUnique.oname(fqn))
-                    )
-                    .map(xnav -> xnav.attribute("line").text().orElse("0"))
-                    .collect(Collectors.toList()).get(0)
-            ),
-            String.format(
-                "Atom with FQN \"%s\" is duplicated, original was found in \"%s\"",
-                fqn,
-                new ProgramName(new XMLDocument(original.node())).get()
-            )
-        );
-    }
-
-    private static List<String> fqns(final Xnav xml) {
+    /**
+     * Extract all atom occurrences from a transformed XMIR source.
+     * @param xmir Transformed XMIR (with @fqn attributes added by XSL)
+     * @return Stream of atom occurrences with FQN and line already captured
+     */
+    private static Stream<LtAtomIsNotUnique.AtomOccurrence> occurrences(final Xnav xmir) {
         final String pack;
-        if (xml.path("/object/metas/meta[head='package']").count() == 1L) {
-            pack = xml.one("/object/metas/meta[head='package']/tail").text().get();
+        if (xmir.path("/object/metas/meta[head='package']").count() == 1L) {
+            pack = xmir.one("/object/metas/meta[head='package']/tail").text().get();
         } else {
             pack = "";
         }
-        return xml.path("//o[@fqn]")
-            .map(o -> o.attribute("fqn").text().get()).map(
-                fqn -> {
-                    final String full;
-                    if (pack.isEmpty()) {
-                        full = String.format("Ф.%s", fqn);
-                    } else {
-                        full = String.format("Ф.%s.%s", pack, fqn);
-                    }
-                    return full;
+        return xmir.path("//o[@fqn]").map(
+            atom -> {
+                final String local = atom.attribute("fqn").text().get();
+                final String full;
+                if (pack.isEmpty()) {
+                    full = String.format("Ф.%s", local);
+                } else {
+                    full = String.format("Ф.%s.%s", pack, local);
                 }
-            ).collect(Collectors.toList());
+                return new LtAtomIsNotUnique.AtomOccurrence(
+                    xmir,
+                    full,
+                    Integer.parseInt(atom.attribute("line").text().orElse("0"))
+                );
+            }
+        );
     }
 
-    private static String oname(final String fqn) {
-        final String result;
-        final List<String> parts = new ListOf<>(fqn.split("\\."));
-        if (parts.size() > 1) {
-            result = parts.get(parts.size() - 1);
-        } else {
-            result = parts.get(0);
+    /**
+     * Single atom occurrence extracted from a transformed XMIR source.
+     * @since 0.0.31
+     */
+    private static final class AtomOccurrence {
+
+        /**
+         * Transformed XMIR source containing this atom.
+         */
+        private final Xnav source;
+
+        /**
+         * Fully qualified name of the atom.
+         */
+        private final String atomFqn;
+
+        /**
+         * Line number of the atom in the source.
+         */
+        private final int line;
+
+        /**
+         * Ctor.
+         * @param src Transformed XMIR source
+         * @param fqn Fully qualified atom name
+         * @param ln Line number
+         * @checkstyle ParameterNumberCheck (5 lines)
+         */
+        AtomOccurrence(final Xnav src, final String fqn, final int ln) {
+            this.source = src;
+            this.atomFqn = fqn;
+            this.line = ln;
         }
-        return result;
+
+        /**
+         * Fully qualified name of the atom.
+         * @return FQN string
+         */
+        String fqn() {
+            return this.atomFqn;
+        }
+
+        /**
+         * Create a defect reporting this atom as a duplicate of another.
+         * @param original The occurrence where the atom was originally defined
+         * @return Defect
+         */
+        Defect defect(final LtAtomIsNotUnique.AtomOccurrence original) {
+            return new Defect.Default(
+                "atom-is-not-unique",
+                Severity.ERROR,
+                new ProgramName(new XMLDocument(this.source.node())).get(),
+                this.line,
+                String.format(
+                    "Atom with FQN \"%s\" is duplicated, original was found in \"%s\"",
+                    this.atomFqn,
+                    new ProgramName(new XMLDocument(original.source.node())).get()
+                )
+            );
+        }
     }
 }
