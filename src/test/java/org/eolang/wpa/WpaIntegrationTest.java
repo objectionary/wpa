@@ -23,9 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 /**
  * Integration tests for {@link Program} with realistic multi-package directory structures.
  * @since 0.1.0
- * @todo #27:60min Re-enable the atom-is-not-unique lint in integration tests once
- *  its performance is fixed. Remove it from the .without() calls in this test class.
- *  The lint is currently too slow because it is called once per source file.
  * @todo #27:60min Re-enable the inconsistent-args lint in integration tests once its
  *  performance is fixed. Remove it from the .without() calls and re-enable the
  *  detectsInconsistentArgsAcrossFolders test. The lint has O(n^2) performance issue.
@@ -55,7 +52,6 @@ final class WpaIntegrationTest {
         MatcherAssert.assertThat(
             "WPA analysis over multiple folders must produce valid defects only",
             new Program(iod, txt, math).without(
-                "atom-is-not-unique",
                 "inconsistent-args",
                 "incorrect-number-of-attributes"
             ).defects(),
@@ -102,7 +98,6 @@ final class WpaIntegrationTest {
         MatcherAssert.assertThat(
             "Consistent package must produce no defects with fast lints",
             new Program(pkg).without(
-                "atom-is-not-unique",
                 "inconsistent-args",
                 "incorrect-number-of-attributes"
             ).defects(),

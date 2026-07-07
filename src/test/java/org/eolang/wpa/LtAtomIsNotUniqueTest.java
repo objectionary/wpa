@@ -5,6 +5,11 @@
 package org.eolang.wpa;
 
 import com.jcabi.xml.XML;
+import com.jcabi.xml.XMLDocument;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import matchers.DefectMatcher;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
@@ -12,12 +17,36 @@ import org.eolang.parser.EoSyntax;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Tests for {@link LtAtomIsNotUnique}.
  * @since 0.0.31
  */
 final class LtAtomIsNotUniqueTest {
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void findsNoDuplicatesInLargePackage() {
+        final int count = 30;
+        final Map<String, XML> pkg = new HashMap<>(count);
+        IntStream.range(0, count).forEach(
+            idx -> pkg.put(
+                String.format("obj%d", idx),
+                new XMLDocument(
+                    String.format(
+                        "<object><o line='1' name='obj%d'><o name='λ'/></o></object>",
+                        idx
+                    )
+                )
+            )
+        );
+        MatcherAssert.assertThat(
+            "Large package with unique atoms must produce no defects within timeout",
+            new LtAtomIsNotUnique().defects(pkg),
+            Matchers.emptyIterable()
+        );
+    }
 
     @Test
     void catchesAtomDuplicatesWithoutPackages() throws Exception {
