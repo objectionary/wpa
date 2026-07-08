@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.cactoos.io.ResourceOf;
+import org.cactoos.list.ListOf;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
 import org.w3c.dom.Node;
@@ -33,18 +34,18 @@ final class LtInconsistentArgs implements Lint {
     }
 
     @Override
-    public Collection<Defect> defects(final Map<String, XML> pkg) throws IOException {
-        return LtInconsistentArgs.usagesByBase(pkg).entrySet().stream()
-            .filter(
-                entry -> entry.getValue().stream()
-                    .map(usage -> usage.args).distinct().count() != 1L
-            ).flatMap(
-                entry -> entry.getValue().stream().map(
-                    usage -> LtInconsistentArgs.toDefect(
-                        this.name(), entry.getKey(), usage, entry.getValue()
-                    )
+    public Collection<Defect> defects(
+        final Map<String, XML> pkg) throws IOException {
+        return LtInconsistentArgs.usagesByBase(pkg).entrySet().stream().filter(
+            entry -> entry.getValue().stream()
+                .map(usage -> usage.args).distinct().count() != 1L
+        ).flatMap(
+            entry -> entry.getValue().stream().map(
+                usage -> LtInconsistentArgs.toDefect(
+                    this.name(), entry, usage
                 )
-            ).collect(Collectors.toList());
+            )
+        ).collect(Collectors.toList());
     }
 
     @Override
@@ -65,25 +66,27 @@ final class LtInconsistentArgs implements Lint {
      * @param pkg Package with sources
      * @return Usages grouped by base name
      */
-    private static Map<String, List<Usage>> usagesByBase(final Map<String, XML> pkg) {
+    private static Map<String, List<Usage>> usagesByBase(
+        final Map<String, XML> pkg) {
         final Map<String, List<Usage>> result = new HashMap<>();
         for (final XML xml : pkg.values()) {
             final Xnav source = new Xnav(xml.inner());
             final String program = new ProgramName(xml).get();
-            source.path("//o[@base]")
-                .filter(obj -> !LtInconsistentArgs.objectReference(obj))
-                .forEach(
-                    obj -> result.computeIfAbsent(
-                        LtInconsistentArgs.objectRef(obj, source),
-                        k -> new ArrayList<>()
-                    ).add(
-                        new Usage(
+            source.path("//o[@base]").filter(
+                obj -> !LtInconsistentArgs.objectReference(obj)
+            ).forEach(
+                obj -> {
+                    final String base =
+                        LtInconsistentArgs.objectRef(obj, source);
+                    result.computeIfAbsent(base, k -> new ArrayList<>(1)).add(
+                        new LtInconsistentArgs.Usage(
                             program,
                             LtInconsistentArgs.lineOf(obj),
                             obj.node().getChildNodes().getLength()
                         )
-                    )
-                );
+                    );
+                }
+            );
         }
         return result;
     }
@@ -91,32 +94,27 @@ final class LtInconsistentArgs implements Lint {
     /**
      * Build a defect for one usage of an inconsistently-called base.
      * @param lint Lint name
-     * @param base Base object name
-     * @param usage The specific usage
-     * @param all All usages of this base across the package
+     * @param entry Base name mapped to all its usages across the package
+     * @param current The specific usage to report
      * @return Defect
      */
     private static Defect toDefect(
         final String lint,
-        final String base,
-        final Usage usage,
-        final List<Usage> all
+        final Map.Entry<String, List<Usage>> entry,
+        final Usage current
     ) {
-        final String clashes = all.stream()
-            .filter(
-                other -> !(other.program.equals(usage.program) && other.line == usage.line)
-            )
-            .map(other -> String.format("%s:%d", other.program, other.line))
-            .collect(Collectors.joining(", "));
         return new Defect.Default(
             lint,
             Severity.WARNING,
-            usage.program,
-            usage.line,
+            current.program,
+            current.line,
             String.format(
                 "Object '%s' has arguments inconsistency (clashes with [%s])",
-                base,
-                clashes
+                entry.getKey(),
+                entry.getValue().stream()
+                    .filter(other -> !current.sameLocation(other))
+                    .map(Usage::clashRef)
+                    .collect(Collectors.joining(", "))
             )
         );
     }
@@ -130,7 +128,8 @@ final class LtInconsistentArgs implements Lint {
     private static String objectRef(final Xnav obj, final Xnav source) {
         final String base = obj.attribute("base").text().get();
         final String result;
-        if (base.startsWith("ξ.") && LtInconsistentArgs.voidAttribute(base, obj)) {
+        if (base.startsWith("ξ.")
+            && LtInconsistentArgs.voidAttribute(base, obj)) {
             result = LtInconsistentArgs.voidFqn(base, obj);
         } else if (base.startsWith("ξ.")) {
             result = String.format(
@@ -171,9 +170,12 @@ final class LtInconsistentArgs implements Lint {
      * @return True or False
      */
     private static boolean voidAttribute(final String base, final Xnav object) {
-        return LtInconsistentArgs.parentObject(object)
-            .path(String.format("o[@name='%s']", base.replace("ξ.", "")))
-            .anyMatch(attr -> attr.attribute("base").text().filter("∅"::equals).isPresent());
+        return LtInconsistentArgs.parentObject(object).path(
+            String.format("o[@name='%s']", base.replace("ξ.", ""))
+        ).anyMatch(
+            attr -> attr.attribute("base")
+                .text().filter("∅"::equals).isPresent()
+        );
     }
 
     /**
@@ -198,7 +200,7 @@ final class LtInconsistentArgs implements Lint {
      * @return Parent tree
      */
     private static String parentTree(final Xnav object) {
-        final List<String> tree = new ArrayList<>();
+        final List<String> tree = new ListOf<>();
         Xnav current = LtInconsistentArgs.parentObject(object);
         while (!"object".equals(current.node().getNodeName())) {
             tree.add(LtInconsistentArgs.coordinates(current));
@@ -246,6 +248,7 @@ final class LtInconsistentArgs implements Lint {
 
     /**
      * One recorded usage of an object in a source file.
+     * @since 0.0.41
      */
     private static final class Usage {
 
@@ -266,14 +269,32 @@ final class LtInconsistentArgs implements Lint {
 
         /**
          * Ctor.
-         * @param program Program name
-         * @param line Line number
-         * @param args Argument count
+         * @param pname Program name
+         * @param lno Line number
+         * @param argc Argument count
          */
-        Usage(final String program, final int line, final int args) {
-            this.program = program;
-            this.line = line;
-            this.args = args;
+        Usage(final String pname, final int lno, final int argc) {
+            this.program = pname;
+            this.line = lno;
+            this.args = argc;
+        }
+
+        /**
+         * Short reference for use in clash messages.
+         * @return Program name and line, colon-separated
+         */
+        String clashRef() {
+            return String.format("%s:%d", this.program, this.line);
+        }
+
+        /**
+         * True if this usage is at the same source location as another.
+         * @param other Other usage
+         * @return True or False
+         */
+        boolean sameLocation(final Usage other) {
+            return this.program.equals(other.program)
+                && this.line == other.line;
         }
     }
 }

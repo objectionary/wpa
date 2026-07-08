@@ -34,12 +34,12 @@ final class LtInconsistentArgsTest {
         for (int idx = 0; idx < count; ++idx) {
             final String args = IntStream.rangeClosed(1, idx + 1)
                 .mapToObj(i -> "      <o base='int'/>")
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.joining(System.lineSeparator()));
             pkg.put(
                 String.format("obj%d", idx),
                 new XMLDocument(
                     String.join(
-                        "\n",
+                        System.lineSeparator(),
                         "<object>",
                         String.format("  <o name='obj%d'>", idx),
                         "    <o base='helper' name='x'>",
