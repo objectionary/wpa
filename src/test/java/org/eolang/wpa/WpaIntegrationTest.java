@@ -23,9 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 /**
  * Integration tests for {@link Program} with realistic multi-package directory structures.
  * @since 0.1.0
- * @todo #27:60min Re-enable the inconsistent-args lint in integration tests once its
- *  performance is fixed. Remove it from the .without() calls and re-enable the
- *  detectsInconsistentArgsAcrossFolders test. The lint has O(n^2) performance issue.
  * @todo #27:60min Re-enable the incorrect-number-of-attributes lint in integration
  *  tests once its performance is fixed. Remove it from the .without() calls in
  *  this test class. The lint recomputes object definitions once per source file.

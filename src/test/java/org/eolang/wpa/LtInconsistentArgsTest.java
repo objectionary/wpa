@@ -5,19 +5,48 @@
 package org.eolang.wpa;
 
 import com.jcabi.xml.XML;
+import com.jcabi.xml.XMLDocument;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
 import org.eolang.parser.EoSyntax;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Tests for {@link LtInconsistentArgs}.
  * @since 0.0.41
  */
 final class LtInconsistentArgsTest {
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void findsNoInconsistencyInLargePackage() throws IOException {
+        final int count = 30;
+        final Map<String, XML> pkg = new HashMap<>(count);
+        IntStream.range(0, count).forEach(
+            idx -> pkg.put(
+                String.format("obj%d", idx),
+                new XMLDocument(
+                    String.format(
+                        "<object><o name='obj%d' line='1'><o base='helper' line='2'><o/><o/></o></o></object>",
+                        idx
+                    )
+                )
+            )
+        );
+        MatcherAssert.assertThat(
+            "Large package with consistent args must produce no inconsistent-args defects within timeout",
+            new LtInconsistentArgs().defects(pkg),
+            Matchers.emptyIterable()
+        );
+    }
 
     @Test
     void catchesArgumentsInconsistency() throws IOException {
