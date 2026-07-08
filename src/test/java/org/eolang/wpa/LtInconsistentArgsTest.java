@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
@@ -27,24 +28,33 @@ final class LtInconsistentArgsTest {
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void findsNoInconsistencyInLargePackage() throws IOException {
-        final int count = 30;
+    void findsInconsistenciesInLargePackage() throws IOException {
+        final int count = 500;
         final Map<String, XML> pkg = new HashMap<>(count);
-        IntStream.range(0, count).forEach(
-            idx -> pkg.put(
+        for (int idx = 0; idx < count; ++idx) {
+            final String args = IntStream.rangeClosed(1, idx + 1)
+                .mapToObj(i -> "      <o base='int'/>")
+                .collect(Collectors.joining("\n"));
+            pkg.put(
                 String.format("obj%d", idx),
                 new XMLDocument(
-                    String.format(
-                        "<object><o name='obj%d' line='1'><o base='helper' line='2'><o/><o/></o></o></object>",
-                        idx
+                    String.join(
+                        "\n",
+                        "<object>",
+                        String.format("  <o name='obj%d'>", idx),
+                        "    <o base='helper' name='x'>",
+                        args,
+                        "    </o>",
+                        "  </o>",
+                        "</object>"
                     )
                 )
-            )
-        );
+            );
+        }
         MatcherAssert.assertThat(
-            "Large package with consistent args must produce no inconsistent-args defects within timeout",
+            "Large package with inconsistent args must detect defects within timeout",
             new LtInconsistentArgs().defects(pkg),
-            Matchers.emptyIterable()
+            Matchers.iterableWithSize(Matchers.greaterThan(0))
         );
     }
 
