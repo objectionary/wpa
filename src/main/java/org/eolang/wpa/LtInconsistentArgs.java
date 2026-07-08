@@ -8,16 +8,14 @@ import com.github.lombrozo.xnav.Xnav;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.cactoos.io.ResourceOf;
-import org.cactoos.list.ListOf;
-import org.cactoos.map.MapOf;
 import org.cactoos.text.TextOf;
 import org.cactoos.text.UncheckedText;
 import org.w3c.dom.Node;
@@ -25,11 +23,6 @@ import org.w3c.dom.Node;
 /**
  * Lint for checking arguments' inconsistency provided to the objects.
  * @since 0.0.41
- * @todo #259:60min Optimize performance of inconsistent arguments finding.
- *  Instead of re-collecting objects in nested loops, we should merge all objects
- *  from all programs into single XMIR under '<o/>' element. After objects
- *  are merged, we can iterate over all the objects there only once, and find
- *  inconsistencies.
  */
 @SuppressWarnings("PMD.TooManyMethods")
 final class LtInconsistentArgs implements Lint {
@@ -41,13 +34,14 @@ final class LtInconsistentArgs implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) throws IOException {
-        final Map<Xnav, Map<String, List<Integer>>> whole = LtInconsistentArgs.scanUsages(pkg);
-        final Map<String, List<Xnav>> bases = LtInconsistentArgs.baseOccurrences(whole);
-        return LtInconsistentArgs.mergedSources(whole).entrySet().stream()
-            .filter(entry -> entry.getValue().stream().distinct().count() != 1L).flatMap(
-                entry -> bases.get(entry.getKey()).stream().flatMap(
-                    src -> this.findClashDefects(
-                        entry.getKey(), src, bases.get(entry.getKey())
+        return LtInconsistentArgs.usagesByBase(pkg).entrySet().stream()
+            .filter(
+                entry -> entry.getValue().stream()
+                    .map(usage -> usage.args).distinct().count() != 1L
+            ).flatMap(
+                entry -> entry.getValue().stream().map(
+                    usage -> LtInconsistentArgs.toDefect(
+                        this.name(), entry.getKey(), usage, entry.getValue()
                     )
                 )
             ).collect(Collectors.toList());
@@ -67,76 +61,64 @@ final class LtInconsistentArgs implements Lint {
     }
 
     /**
-     * Find clash defects for a single source.
-     * @param base Base object name
-     * @param src Source XMIR navigator
-     * @param sources All sources containing this base
-     * @return Stream of defects
+     * Scan all files once and collect all object usages grouped by base name.
+     * @param pkg Package with sources
+     * @return Usages grouped by base name
      */
-    private Stream<Defect> findClashDefects(
-        final String base,
-        final Xnav src,
-        final List<Xnav> sources
-    ) {
-        final Map<String, List<Integer>> clashes = LtInconsistentArgs.clashes(sources, base);
-        final Stream<Defect> result;
-        if (clashes.isEmpty()) {
-            result = Stream.empty();
-        } else {
-            final String program = new ProgramName(new XMLDocument(src.node())).get();
-            result = LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream().flatMap(
-                entry -> src.path(entry.getKey())
-                    .filter(o -> !LtInconsistentArgs.objectReference(o))
-                    .filter(entry.getValue()).map(
-                        o -> new Defect.Default(
-                            this.name(),
-                            Severity.WARNING,
+    private static Map<String, List<Usage>> usagesByBase(final Map<String, XML> pkg) {
+        final Map<String, List<Usage>> result = new HashMap<>();
+        for (final XML xml : pkg.values()) {
+            final Xnav source = new Xnav(xml.inner());
+            final String program = new ProgramName(xml).get();
+            source.path("//o[@base]")
+                .filter(obj -> !LtInconsistentArgs.objectReference(obj))
+                .forEach(
+                    obj -> result.computeIfAbsent(
+                        LtInconsistentArgs.objectRef(obj, source),
+                        k -> new ArrayList<>()
+                    ).add(
+                        new Usage(
                             program,
-                            LtInconsistentArgs.lineOf(o),
-                            String.format(
-                                "Object '%s' has arguments inconsistency (clashes with [%s])",
-                                base,
-                                LtInconsistentArgs.objectClashes(
-                                    clashes, program, LtInconsistentArgs.lineOf(o)
-                                )
-                            )
+                            LtInconsistentArgs.lineOf(obj),
+                            obj.node().getChildNodes().getLength()
                         )
                     )
-            );
+                );
         }
         return result;
     }
 
     /**
-     * Extract line number from an XML object.
-     * @param obj Object navigator
-     * @return Line number or 0 if not found
+     * Build a defect for one usage of an inconsistently-called base.
+     * @param lint Lint name
+     * @param base Base object name
+     * @param usage The specific usage
+     * @param all All usages of this base across the package
+     * @return Defect
      */
-    private static int lineOf(final Xnav obj) {
-        return Integer.parseInt(obj.attribute("line").text().orElse("0"));
-    }
-
-    /**
-     * Scan all usages across package.
-     * @param pkg Package with sources
-     * @return Map of all object usages: source is the key, object name, arguments is the value
-     */
-    private static Map<Xnav, Map<String, List<Integer>>> scanUsages(final Map<String, XML> pkg) {
-        return pkg.values().stream()
-            .map(xmir -> new Xnav(xmir.inner())).collect(
-                Collectors.toMap(
-                    source -> source,
-                    source -> source.path("//o[@base]").collect(
-                        Collectors.groupingBy(
-                            o -> LtInconsistentArgs.objectRef(o, source),
-                            Collectors.mapping(
-                                o -> o.node().getChildNodes().getLength(),
-                                Collectors.toList()
-                            )
-                        )
-                    )
-                )
-            );
+    private static Defect toDefect(
+        final String lint,
+        final String base,
+        final Usage usage,
+        final List<Usage> all
+    ) {
+        final String clashes = all.stream()
+            .filter(
+                other -> !(other.program.equals(usage.program) && other.line == usage.line)
+            )
+            .map(other -> String.format("%s:%d", other.program, other.line))
+            .collect(Collectors.joining(", "));
+        return new Defect.Default(
+            lint,
+            Severity.WARNING,
+            usage.program,
+            usage.line,
+            String.format(
+                "Object '%s' has arguments inconsistency (clashes with [%s])",
+                base,
+                clashes
+            )
+        );
     }
 
     /**
@@ -163,99 +145,23 @@ final class LtInconsistentArgs implements Lint {
     }
 
     /**
-     * Merge all object usages into single map.
-     * @param whole All object usages across all sources
-     * @return Merged object usages as a map
+     * Extract line number from an XML object.
+     * @param obj Object navigator
+     * @return Line number or 0 if not found
      */
-    private static Map<String, List<Integer>> mergedSources(
-        final Map<Xnav, Map<String, List<Integer>>> whole
-    ) {
-        return whole.values().stream()
-            .flatMap(localized -> localized.entrySet().stream()).collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    entry -> new ListOf<>(entry.getValue()),
-                    (list1, list2) -> {
-                        list1.addAll(list2);
-                        return list1;
-                    }
-                )
-            );
+    private static int lineOf(final Xnav obj) {
+        return Integer.parseInt(obj.attribute("line").text().orElse("0"));
     }
 
     /**
-     * Object occurrences across all sources, grouped by object base attribute.
-     * @param whole All object usages across all sources
-     * @return Grouped base occurrences in the sources
+     * Object is a reference to itself?
+     * @param object Object
+     * @return True or False
      */
-    private static Map<String, List<Xnav>> baseOccurrences(
-        final Map<Xnav, Map<String, List<Integer>>> whole
-    ) {
-        return whole.entrySet().stream().flatMap(
-            entry -> entry.getValue().keySet().stream()
-                .map(base -> Map.entry(base, entry.getKey()))
-        ).collect(
-            Collectors.groupingBy(
-                Map.Entry::getKey,
-                Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-            )
-        );
-    }
-
-    /**
-     * Aggregate usage clashes for the given base.
-     * @param sources Sources
-     * @param base Base
-     * @return Usage clashes
-     */
-    private static Map<String, List<Integer>> clashes(
-        final Iterable<Xnav> sources, final String base
-    ) {
-        return java.util.stream.StreamSupport.stream(sources.spliterator(), false)
-            .flatMap(src -> LtInconsistentArgs.sourceClashes(src, base)).collect(
-                Collectors.groupingBy(
-                    Map.Entry::getKey,
-                    Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-                )
-            );
-    }
-
-    /**
-     * Find clashes from a single source.
-     * @param src Source navigator
-     * @param base Base name
-     * @return Stream of program-line entries
-     */
-    private static Stream<Map.Entry<String, Integer>> sourceClashes(
-        final Xnav src, final String base
-    ) {
-        return LtInconsistentArgs.fqnToSearch(base, src).entrySet().stream().flatMap(
-            entry -> src.path(entry.getKey())
-                .filter(o -> !LtInconsistentArgs.objectReference(o))
-                .filter(entry.getValue()).map(
-                    o -> Map.entry(
-                        new ProgramName(new XMLDocument(src.node())).get(),
-                        Integer.parseInt(o.attribute("line").text().orElse("0"))
-                    )
-                )
-        );
-    }
-
-    /**
-     * List of clashes for given object.
-     * @param clashes List of clashes
-     * @param current Current object
-     * @param oline Origin line in given object
-     * @return With which objects, given object clashes, as string expression
-     */
-    private static String objectClashes(
-        final Map<String, List<Integer>> clashes, final String current, final int oline
-    ) {
-        return clashes.entrySet().stream().flatMap(
-            entry -> entry.getValue().stream()
-                .filter(line -> !(entry.getKey().equals(current) && line == oline))
-                .map(line -> String.format("%s:%d", entry.getKey(), line))
-        ).collect(Collectors.joining(", "));
+    private static boolean objectReference(final Xnav object) {
+        final Optional<String> base = object.attribute("base").text();
+        return object.attribute("name").text().isEmpty() && base.isPresent()
+            && base.get().startsWith("ξ.");
     }
 
     /**
@@ -271,17 +177,6 @@ final class LtInconsistentArgs implements Lint {
     }
 
     /**
-     * Object is a reference to itself?
-     * @param object Object
-     * @return True or False
-     */
-    private static boolean objectReference(final Xnav object) {
-        final Optional<String> base = object.attribute("base").text();
-        return object.attribute("name").text().isEmpty() && base.isPresent()
-            && base.get().startsWith("ξ.");
-    }
-
-    /**
      * Void FQN for given base in object scope.
      * @param base Base
      * @param object Object
@@ -291,9 +186,7 @@ final class LtInconsistentArgs implements Lint {
         final Xnav method = LtInconsistentArgs.parentObject(object);
         return String.format(
             "%s%s.%s.∅",
-            LtInconsistentArgs.parentTree(
-                method
-            ),
+            LtInconsistentArgs.parentTree(method),
             LtInconsistentArgs.coordinates(method),
             base
         );
@@ -305,7 +198,7 @@ final class LtInconsistentArgs implements Lint {
      * @return Parent tree
      */
     private static String parentTree(final Xnav object) {
-        final List<String> tree = new ListOf<>();
+        final List<String> tree = new ArrayList<>();
         Xnav current = LtInconsistentArgs.parentObject(object);
         while (!"object".equals(current.node().getNodeName())) {
             tree.add(LtInconsistentArgs.coordinates(current));
@@ -316,47 +209,6 @@ final class LtInconsistentArgs implements Lint {
             result = "";
         } else {
             result = tree.stream().collect(Collectors.joining(".", "", "."));
-        }
-        return result;
-    }
-
-    /**
-     * Map object FQN to search.
-     * @param fqn Object FQN
-     * @param src Source XMIR
-     * @return Search map, where key is XPath, value is search filter
-     */
-    private static Map<String, Predicate<Xnav>> fqnToSearch(final String fqn, final Xnav src) {
-        final Map<String, Predicate<Xnav>> result = new MapOf<>();
-        if (fqn.endsWith("∅")) {
-            result.put(new VoidXpath(fqn).asString(), object -> true);
-        } else {
-            result.put(
-                String.format(
-                    "//o[@base='%s']", LtInconsistentArgs.relativizeToTopObject(fqn, src)
-                ),
-                object ->
-                    !LtInconsistentArgs.voidAttribute(
-                        LtInconsistentArgs.relativizeToTopObject(fqn, src), object
-                    )
-            );
-        }
-        return result;
-    }
-
-    /**
-     * Relativize base to the top object name.
-     * @param base Object base
-     * @param source Source
-     * @return Relativized object base
-     */
-    private static String relativizeToTopObject(final String base, final Xnav source) {
-        final String top = new ProgramName(new XMLDocument(source.node())).get();
-        final String result;
-        if (base.startsWith(String.format("%s.ξ.", top))) {
-            result = base.replace(String.format("%s.", top), "");
-        } else {
-            result = base;
         }
         return result;
     }
@@ -390,5 +242,38 @@ final class LtInconsistentArgs implements Lint {
             result = new Xnav("<o/>");
         }
         return result;
+    }
+
+    /**
+     * One recorded usage of an object in a source file.
+     */
+    private static final class Usage {
+
+        /**
+         * Program name.
+         */
+        private final String program;
+
+        /**
+         * Line number.
+         */
+        private final int line;
+
+        /**
+         * Argument count.
+         */
+        private final int args;
+
+        /**
+         * Ctor.
+         * @param program Program name
+         * @param line Line number
+         * @param args Argument count
+         */
+        Usage(final String program, final int line, final int args) {
+            this.program = program;
+            this.line = line;
+            this.args = args;
+        }
     }
 }
