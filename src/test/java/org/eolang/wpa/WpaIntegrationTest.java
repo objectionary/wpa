@@ -15,7 +15,6 @@ import matchers.DefectMatcher;
 import org.eolang.parser.EoSyntax;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +48,6 @@ final class WpaIntegrationTest {
         MatcherAssert.assertThat(
             "WPA analysis over multiple folders must produce valid defects only",
             new Program(iod, txt, math).without(
-                "inconsistent-args",
                 "incorrect-number-of-attributes"
             ).defects(),
             Matchers.everyItem(new DefectMatcher())
@@ -57,7 +55,6 @@ final class WpaIntegrationTest {
     }
 
     @Test
-    @Disabled("inconsistent-args is too slow, see #27")
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void detectsInconsistentArgsAcrossFolders(@Mktmp final Path tmp) throws IOException {
         final Path lib = tmp.resolve("lib");
@@ -95,7 +92,6 @@ final class WpaIntegrationTest {
         MatcherAssert.assertThat(
             "Consistent package must produce no defects with fast lints",
             new Program(pkg).without(
-                "inconsistent-args",
                 "incorrect-number-of-attributes"
             ).defects(),
             Matchers.emptyIterable()
