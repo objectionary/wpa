@@ -22,9 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 /**
  * Integration tests for {@link Program} with realistic multi-package directory structures.
  * @since 0.1.0
- * @todo #27:60min Re-enable the incorrect-number-of-attributes lint in integration
- *  tests once its performance is fixed. Remove it from the .without() calls in
- *  this test class. The lint recomputes object definitions once per source file.
  */
 @ExtendWith(MktmpResolver.class)
 @SuppressWarnings("JTCOP.RuleEveryTestHasProductionClass")
@@ -47,9 +44,7 @@ final class WpaIntegrationTest {
         this.file(math, "max.xmir", "# Max.", "[first second] > max");
         MatcherAssert.assertThat(
             "WPA analysis over multiple folders must produce valid defects only",
-            new Program(iod, txt, math).without(
-                "incorrect-number-of-attributes"
-            ).defects(),
+            new Program(iod, txt, math).defects(),
             Matchers.everyItem(new DefectMatcher())
         );
     }
@@ -91,9 +86,7 @@ final class WpaIntegrationTest {
         this.file(pkg, "baz.xmir", "# Baz.", "[] > baz", "  foo 2 > y");
         MatcherAssert.assertThat(
             "Consistent package must produce no defects with fast lints",
-            new Program(pkg).without(
-                "incorrect-number-of-attributes"
-            ).defects(),
+            new Program(pkg).defects(),
             Matchers.emptyIterable()
         );
     }

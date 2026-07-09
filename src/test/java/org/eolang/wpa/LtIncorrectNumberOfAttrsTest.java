@@ -5,19 +5,66 @@
 package org.eolang.wpa;
 
 import com.jcabi.xml.XML;
+import com.jcabi.xml.XMLDocument;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
 import org.eolang.parser.EoSyntax;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Tests for {@link LtIncorrectNumberOfAttrs}.
  * @since 0.0.43
  */
 final class LtIncorrectNumberOfAttrsTest {
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    void findsNoDefectsInLargeConsistentPackage() throws IOException {
+        final int count = 500;
+        final Map<String, XML> pkg = new HashMap<>(count);
+        pkg.put(
+            "helper",
+            new XMLDocument(
+                String.join(
+                    System.lineSeparator(),
+                    "<object>",
+                    "  <o name='helper'>",
+                    "    <o base='∅' name='a'/>",
+                    "  </o>",
+                    "</object>"
+                )
+            )
+        );
+        for (int idx = 0; idx < count - 1; ++idx) {
+            pkg.put(
+                String.format("user%d", idx),
+                new XMLDocument(
+                    String.join(
+                        System.lineSeparator(),
+                        "<object>",
+                        String.format("  <o name='user%d'>", idx),
+                        "    <o base='Φ.helper' line='1'>",
+                        "      <o base='int'/>",
+                        "    </o>",
+                        "  </o>",
+                        "</object>"
+                    )
+                )
+            );
+        }
+        MatcherAssert.assertThat(
+            "Large consistent package must find no defects within timeout",
+            new LtIncorrectNumberOfAttrs().defects(pkg),
+            Matchers.emptyIterable()
+        );
+    }
 
     @Test
     void catchesIncorrectNumberOfAttributes() throws IOException {
