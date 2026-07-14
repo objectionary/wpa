@@ -18,6 +18,7 @@ import org.cactoos.list.ListOf;
  *
  * <p>This class is thread-safe.</p>
  *
+ * @since 0.1.0
  * @todo #62:90min Reconsider the architectural placement of LtUnlintNonExistingDefectWpa.
  *  This lint is a second-order lint (lint of lints): it validates +unlint annotations
  *  by running other active lints and inspecting their results. This makes it
@@ -25,7 +26,6 @@ import org.cactoos.list.ListOf;
  *  it as a special case. Consider whether it belongs in the Lint hierarchy at all,
  *  or should be extracted into a separate post-processing abstraction that operates
  *  on already-computed defect results rather than embedding itself among peer lints.
- * @since 0.1.0
  */
 final class PkWpa implements Iterable<Lint> {
 
