@@ -212,6 +212,30 @@ final class ProgramTest {
     }
 
     @Test
+    void doesNotRunUnlintNonExistingDefectWhenExcluded() throws IOException {
+        MatcherAssert.assertThat(
+            "unlint-non-existing-defect should produce no defects when excluded via without()",
+            new Program(
+                new MapOf<>(
+                    "f",
+                    new EoSyntax(
+                        String.join(
+                            System.lineSeparator(),
+                            "+unlint object-is-not-unique",
+                            "",
+                            "# F.",
+                            "[] > f"
+                        )
+                    ).parsed()
+                )
+            ).without("unlint-non-existing-defect").defects().stream()
+                .filter(defect -> defect.rule().startsWith("unlint-non-existing-defect"))
+                .collect(Collectors.toList()),
+            Matchers.emptyIterable()
+        );
+    }
+
+    @Test
     void outputsInformationAboutWpaScope() throws IOException {
         MatcherAssert.assertThat(
             "Found defects don't contain information about WPA scope, but they should",
