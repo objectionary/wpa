@@ -175,7 +175,7 @@ final class ProgramTest {
 
     @ParameterizedTest
     @ValueSource(
-        strings = {"incorrect-alias", "incorrect-alias:1"}
+        strings = {"object-is-not-unique", "object-is-not-unique:1"}
     )
     void catchesBrokenUnlintAfterLintWasRemoved(final String lid) throws IOException {
         MatcherAssert.assertThat(
@@ -186,7 +186,6 @@ final class ProgramTest {
                     new EoSyntax(
                         String.join(
                             System.lineSeparator(),
-                            "+alias x.y.z z",
                             String.format("+unlint %s", lid),
                             "",
                             "# F.",
@@ -194,7 +193,7 @@ final class ProgramTest {
                         )
                     ).parsed()
                 )
-            ).without("incorrect-alias").defects(),
+            ).without("object-is-not-unique").defects(),
             Matchers.allOf(
                 Matchers.iterableWithSize(1),
                 Matchers.hasItem(

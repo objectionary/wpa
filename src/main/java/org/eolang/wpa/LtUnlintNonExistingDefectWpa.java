@@ -31,6 +31,13 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
     private final Iterable<Lint> lints;
 
     /**
+     * Full canonical WPA scope, used to determine which rule names this lint manages.
+     * Kept separate from {@link #lints} so that lints disabled via {@code without()} are
+     * still considered WPA-scoped and their {@code +unlint} annotations are still checked.
+     */
+    private final Iterable<Lint> scope;
+
+    /**
      * Lint names for exclusion.
      */
     private final Collection<String> excluded;
@@ -40,7 +47,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
      * @param lnts Lints
      */
     LtUnlintNonExistingDefectWpa(final Iterable<Lint> lnts) {
-        this(lnts, new ListOf<>());
+        this(lnts, lnts, new ListOf<>());
     }
 
     /**
@@ -51,7 +58,20 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
     LtUnlintNonExistingDefectWpa(
         final Iterable<Lint> lnts, final Collection<String> exld
     ) {
+        this(lnts, lnts, exld);
+    }
+
+    /**
+     * Ctor.
+     * @param lnts Active lints used to find existing defects
+     * @param scp Full canonical WPA scope for determining which rule names are WPA-managed
+     * @param exld Lint names to exclude
+     */
+    LtUnlintNonExistingDefectWpa(
+        final Iterable<Lint> lnts, final Iterable<Lint> scp, final Collection<String> exld
+    ) {
         this.lints = lnts;
+        this.scope = scp;
         this.excluded = exld;
     }
 
@@ -62,7 +82,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        final Set<String> wpanames = StreamSupport.stream(this.lints.spliterator(), false)
+        final Set<String> wpanames = StreamSupport.stream(this.scope.spliterator(), false)
             .map(Lint::name)
             .collect(Collectors.toSet());
         return this.packageDefects(pkg, this.existingDefects(pkg), wpanames);

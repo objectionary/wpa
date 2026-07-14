@@ -48,7 +48,7 @@ final class PkWpa extends IterableEnvelope<Lint> {
                     new Joined<Lint>(
                         lints,
                         new ListOf<>(
-                            new LtUnlintNonExistingDefectWpa(lints)
+                            new LtUnlintNonExistingDefectWpa(lints, PkWpa.WPA, new ListOf<>())
                         )
                     )
                 )
