@@ -5,6 +5,7 @@
 package org.eolang.wpa;
 
 import org.cactoos.iterable.IterableEnvelope;
+import org.cactoos.list.ListOf;
 
 /**
  * WPA lints without lint names.
@@ -22,6 +23,6 @@ final class WpaWithout extends IterableEnvelope<Lint> {
      * @param names Lints to exclude
      */
     WpaWithout(final String... names) {
-        super(new PkWpa(new WithoutLints(WpaWithout.WPA, names)));
+        super(new PkWpa(new WithoutLints(WpaWithout.WPA, names), new ListOf<>(names)));
     }
 }
