@@ -82,10 +82,13 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        final Set<String> wpanames = StreamSupport.stream(this.scope.spliterator(), false)
-            .map(Lint::name)
-            .collect(Collectors.toSet());
-        return this.packageDefects(pkg, this.existingDefects(pkg), wpanames);
+        return this.packageDefects(
+            pkg,
+            this.existingDefects(pkg),
+            StreamSupport.stream(this.scope.spliterator(), false)
+                .map(Lint::name)
+                .collect(Collectors.toSet())
+        );
     }
 
     @Override
