@@ -123,9 +123,9 @@ final class LtUnlintNonExistingDefectWpaTest {
     }
 
     @Test
-    void reportsWithWpaSupplied() throws IOException {
+    void doesNotReportNonWpaUnlintRulesWithWpaSupplied() throws IOException {
         MatcherAssert.assertThat(
-            "Defects are empty, but they should not",
+            "Non-WPA unlint rule should not be flagged even when WPA lints are supplied",
             new LtUnlintNonExistingDefectWpa(
                 new PkWpa(),
                 new ListOf<>()
@@ -146,7 +146,32 @@ final class LtUnlintNonExistingDefectWpaTest {
                     new MapEntry<>("e", new XMLDocument("<object><o name='e'/></object>"))
                 )
             ),
-            Matchers.hasSize(Matchers.greaterThan(0))
+            Matchers.emptyIterable()
+        );
+    }
+
+    @Test
+    void doesNotReportNonWpaUnlintRules() throws IOException {
+        MatcherAssert.assertThat(
+            "Non-WPA unlint rules should not be flagged as unlint-non-existing-defect",
+            new LtUnlintNonExistingDefectWpa(
+                new WpaLints(),
+                new ListOf<>()
+            ).defects(
+                new MapOf<>(
+                    "foo",
+                    new EoSyntax(
+                        String.join(
+                            System.lineSeparator(),
+                            "+unlint redundant-object",
+                            "",
+                            "# Foo.",
+                            "[] > foo"
+                        )
+                    ).parsed()
+                )
+            ),
+            Matchers.emptyIterable()
         );
     }
 

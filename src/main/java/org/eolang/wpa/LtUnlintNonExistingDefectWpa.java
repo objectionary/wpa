@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -61,7 +62,10 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     @Override
     public Collection<Defect> defects(final Map<String, XML> pkg) {
-        return this.packageDefects(pkg, this.existingDefects(pkg));
+        final Set<String> wpanames = StreamSupport.stream(this.lints.spliterator(), false)
+            .map(Lint::name)
+            .collect(Collectors.toSet());
+        return this.packageDefects(pkg, this.existingDefects(pkg), wpanames);
     }
 
     @Override
@@ -81,13 +85,15 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
      * Find defects across all sources using precomputed existing defects.
      * @param pkg Program package
      * @param existing Precomputed existing defects grouped by rule name
+     * @param wpanames Names of all WPA-scoped lint rules
      * @return Defects found
      */
     private Collection<Defect> packageDefects(
-        final Map<String, XML> pkg, final Map<String, List<Integer>> existing
+        final Map<String, XML> pkg, final Map<String, List<Integer>> existing,
+        final Set<String> wpanames
     ) {
         return pkg.values().stream()
-            .flatMap(xmir -> this.sourceDefects(xmir, existing).stream())
+            .flatMap(xmir -> this.sourceDefects(xmir, existing, wpanames).stream())
             .collect(Collectors.toList());
     }
 
@@ -95,14 +101,17 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
      * Find defects for single source.
      * @param xmir Source XML
      * @param existing Existing defects map
+     * @param wpanames Names of all WPA-scoped lint rules
      * @return Defects found
      */
     private Collection<Defect> sourceDefects(
-        final XML xmir, final Map<String, List<Integer>> existing
+        final XML xmir, final Map<String, List<Integer>> existing,
+        final Set<String> wpanames
     ) {
         return new Xnav(xmir.inner()).path("/object/metas/meta[head='unlint']/tail")
             .map(xnav -> xnav.text().get())
             .distinct()
+            .filter(unlint -> wpanames.contains(unlint.split(":", -1)[0]))
             .filter(new DefectMissing(existing, this.excluded)::apply).flatMap(
                 unlint -> new Xnav(xmir.inner()).path(
                     String.format(
