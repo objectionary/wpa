@@ -22,8 +22,7 @@ final class WpaLints extends IterableEnvelope<Lint> {
                 new LtIncorrectAlias(),
                 new LtObjectIsNotUnique(),
                 new LtAtomIsNotUnique(),
-                new LtInconsistentArgs(),
-                new LtIncorrectNumberOfAttrs()
+                new LtInconsistentArgs()
             )
         );
     }
