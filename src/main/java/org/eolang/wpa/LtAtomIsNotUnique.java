@@ -36,7 +36,6 @@ final class LtAtomIsNotUnique implements Lint {
 
     /**
      * Ctor.
-     * @checkstyle ConstructorsCodeFreeCheck (10 lines)
      */
     LtAtomIsNotUnique() {
         this(
@@ -158,7 +157,6 @@ final class LtAtomIsNotUnique implements Lint {
          * @param src Transformed XMIR source
          * @param fqn Fully qualified atom name
          * @param lno Line number
-         * @checkstyle ParameterNumberCheck (5 lines)
          */
         AtomOccurrence(final Xnav src, final String fqn, final int lno) {
             this.source = src;

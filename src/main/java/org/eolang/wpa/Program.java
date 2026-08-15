@@ -65,7 +65,6 @@ public final class Program {
      * Ctor.
      * @param dirs The directory
      * @throws IOException If fails
-     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     public Program(final Path... dirs) throws IOException {
         this(Arrays.asList(dirs));
@@ -79,7 +78,6 @@ public final class Program {
      *
      * @param dirs The directory
      * @throws IOException If fails
-     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     public Program(final Collection<Path> dirs) throws IOException {
         this(Program.discover(dirs));

@@ -25,7 +25,6 @@ final class ProgramName {
     /**
      * Ctor.
      * @param xml XML document
-     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     ProgramName(final XML xml) {
         this(new Xnav(xml.inner()));

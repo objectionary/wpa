@@ -97,7 +97,6 @@ final class LtObjectIsNotUnique implements Lint {
          */
         private final XML source;
 
-        // @checkstyle ParameterNumberCheck (5 lines)
         private SourceObject(
             final String pkg, final String name, final int line, final XML source
         ) {

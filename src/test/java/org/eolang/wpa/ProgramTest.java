@@ -133,7 +133,7 @@ final class ProgramTest {
                     )
                 )
             ).without("incorrect-alias").defects().stream()
-                .filter(defect -> defect.rule().equals("incorrect-alias"))
+                .filter(defect -> "incorrect-alias".equals(defect.rule()))
                 .collect(Collectors.toList()),
             Matchers.emptyIterable()
         );

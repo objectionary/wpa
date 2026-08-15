@@ -25,7 +25,6 @@ import org.w3c.dom.Node;
  * Lint for checking arguments' inconsistency provided to the objects.
  * @since 0.0.41
  */
-@SuppressWarnings("PMD.TooManyMethods")
 final class LtInconsistentArgs implements Lint {
 
     @Override
