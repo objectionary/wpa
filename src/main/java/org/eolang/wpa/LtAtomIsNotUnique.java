@@ -7,7 +7,6 @@ package org.eolang.wpa;
 import com.github.lombrozo.xnav.Xnav;
 import com.jcabi.xml.ClasspathSources;
 import com.jcabi.xml.XML;
-import com.jcabi.xml.XMLDocument;
 import com.jcabi.xml.XSL;
 import com.jcabi.xml.XSLDocument;
 import java.util.Collection;
@@ -66,7 +65,7 @@ final class LtAtomIsNotUnique implements Lint {
             .map(this.pre::transform)
             .map(xmir -> new Xnav(xmir.inner()))
             .flatMap(LtAtomIsNotUnique::occurrences)
-            .collect(Collectors.groupingBy(LtAtomIsNotUnique.AtomOccurrence::fqn))
+            .collect(Collectors.groupingBy(AtomOccurrence::fqn))
             .values().stream()
             .filter(group -> group.size() > 1)
             .flatMap(group -> LtAtomIsNotUnique.groupDefects(group).stream())
@@ -86,13 +85,8 @@ final class LtAtomIsNotUnique implements Lint {
         ).asString();
     }
 
-    /**
-     * Create defects for a group of occurrences that share the same atom FQN.
-     * @param group Occurrences with the same FQN
-     * @return Defects
-     */
     private static Collection<Defect> groupDefects(
-        final List<LtAtomIsNotUnique.AtomOccurrence> group
+        final List<AtomOccurrence> group
     ) {
         return IntStream.range(0, group.size()).boxed().flatMap(
             idx -> IntStream.range(0, group.size())
@@ -101,12 +95,7 @@ final class LtAtomIsNotUnique implements Lint {
         ).collect(Collectors.toList());
     }
 
-    /**
-     * Extract all atom occurrences from a transformed XMIR source.
-     * @param xmir Transformed XMIR (with @fqn attributes added by XSL)
-     * @return Stream of atom occurrences with FQN and line already captured
-     */
-    private static Stream<LtAtomIsNotUnique.AtomOccurrence> occurrences(final Xnav xmir) {
+    private static Stream<AtomOccurrence> occurrences(final Xnav xmir) {
         final String pack;
         if (xmir.path("/object/metas/meta[head='package']").count() == 1L) {
             pack = xmir.one("/object/metas/meta[head='package']/tail").text().get();
@@ -122,73 +111,12 @@ final class LtAtomIsNotUnique implements Lint {
                 } else {
                     full = String.format("Ф.%s.%s", pack, local);
                 }
-                return new LtAtomIsNotUnique.AtomOccurrence(
+                return new AtomOccurrence(
                     xmir,
                     full,
                     Integer.parseInt(atom.attribute("line").text().orElse("0"))
                 );
             }
         );
-    }
-
-    /**
-     * Single atom occurrence extracted from a transformed XMIR source.
-     * @since 0.0.31
-     */
-    private static final class AtomOccurrence {
-
-        /**
-         * Transformed XMIR source containing this atom.
-         */
-        private final Xnav source;
-
-        /**
-         * Fully qualified name of the atom.
-         */
-        private final String atomfqn;
-
-        /**
-         * Line number of the atom in the source.
-         */
-        private final int line;
-
-        /**
-         * Ctor.
-         * @param src Transformed XMIR source
-         * @param fqn Fully qualified atom name
-         * @param lno Line number
-         */
-        AtomOccurrence(final Xnav src, final String fqn, final int lno) {
-            this.source = src;
-            this.atomfqn = fqn;
-            this.line = lno;
-        }
-
-        /**
-         * Fully qualified name of the atom.
-         * @return FQN string
-         */
-        String fqn() {
-            return this.atomfqn;
-        }
-
-        /**
-         * Create a defect reporting this atom as a duplicate of another.
-         * @param original The occurrence where the atom was originally defined
-         * @return Defect
-         */
-        Defect defect(final LtAtomIsNotUnique.AtomOccurrence original) {
-            return new Defect.Default(
-                "atom-is-not-unique",
-                Severity.ERROR,
-                new ProgramName(new XMLDocument(this.source.node())).get(),
-                this.line,
-                String.format(
-                    "Atom with FQN \"%s\" is duplicated, original was found in \"%s\"",
-                    this.atomfqn,
-                    new ProgramName(new XMLDocument(original.source.node())).get()
-                )
-            );
-        }
     }
 }

@@ -50,11 +50,6 @@ final class ProgramName {
             .orElseGet(() -> this.objectName().orElse("unknown"));
     }
 
-    /**
-     * Extract packaged name from metas element.
-     * @param metas Metas element navigator
-     * @return Full packaged name or just object name
-     */
     private String packagedName(final Xnav metas) {
         return metas.elements(
             Filter.all(
@@ -72,10 +67,6 @@ final class ProgramName {
         ).orElseGet(() -> this.objectName().orElse("unknown"));
     }
 
-    /**
-     * Get object name from XMIR.
-     * @return Object name or empty if not found
-     */
     private Optional<String> objectName() {
         return this.xnav
             .element("object")

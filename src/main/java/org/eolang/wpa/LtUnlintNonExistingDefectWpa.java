@@ -104,13 +104,6 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
         ).asString();
     }
 
-    /**
-     * Find defects across all sources using precomputed existing defects.
-     * @param pkg Program package
-     * @param existing Precomputed existing defects grouped by rule name
-     * @param wpanames Names of all WPA-scoped lint rules
-     * @return Defects found
-     */
     private Collection<Defect> packageDefects(
         final Map<String, XML> pkg, final Map<String, List<Integer>> existing,
         final Set<String> wpanames
@@ -120,13 +113,6 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
             .collect(Collectors.toList());
     }
 
-    /**
-     * Find defects for single source.
-     * @param xmir Source XML
-     * @param existing Existing defects map
-     * @param wpanames Names of all WPA-scoped lint rules
-     * @return Defects found
-     */
     private Collection<Defect> sourceDefects(
         final XML xmir, final Map<String, List<Integer>> existing,
         final Set<String> wpanames
@@ -155,11 +141,6 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
             ).collect(Collectors.toList());
     }
 
-    /**
-     * Find existing defects.
-     * @param pkg Program package to scan
-     * @return Map of existing defects grouped by rule name
-     */
     private Map<String, List<Integer>> existingDefects(final Map<String, XML> pkg) {
         return StreamSupport.stream(this.lints.spliterator(), false)
             .flatMap(wpl -> LtUnlintNonExistingDefectWpa.defectStream(wpl, pkg)).collect(
@@ -170,12 +151,6 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
             );
     }
 
-    /**
-     * Produce a stream of defects from a lint, wrapping IO errors.
-     * @param lint The lint
-     * @param pkg The package
-     * @return Stream of defects
-     */
     private static Stream<Defect> defectStream(final Lint lint, final Map<String, XML> pkg) {
         try {
             return lint.defects(pkg).stream();

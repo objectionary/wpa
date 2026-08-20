@@ -34,10 +34,6 @@ final class UnlintInRange implements Predicate<Integer> {
             && line <= Integer.parseInt(this.range().get(1));
     }
 
-    /**
-     * Extract range from unlint expression.
-     * @return List with two elements: start and end of range
-     */
     private List<String> range() {
         return Splitter.on('-').splitToList(
             this.unlint.replace(

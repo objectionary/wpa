@@ -142,12 +142,6 @@ public final class Program {
         return messages;
     }
 
-    /**
-     * Discover all XMIR files in the directory.
-     * @param dirs The directories to search for XMIR files in (recursively)
-     * @return Map of XMIR files
-     * @throws IOException If fails
-     */
     private static Map<String, XML> discover(
         final Iterable<Path> dirs
     ) throws IOException {
@@ -158,12 +152,6 @@ public final class Program {
         return map;
     }
 
-    /**
-     * Discover all XMIR files in the directory.
-     * @param dir The directories to search for XMIR files in (recursively)
-     * @return Map of XMIR files
-     * @throws IOException If fails
-     */
     private static Map<String, XML> discover(final Path dir)
         throws IOException {
         final Map<String, XML> map = new HashMap<>(0);

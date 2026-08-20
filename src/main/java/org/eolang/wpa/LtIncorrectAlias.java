@@ -49,24 +49,12 @@ final class LtIncorrectAlias implements Lint {
         ).asString();
     }
 
-    /**
-     * Extract lookup name from alias.
-     * @param alias Alias navigator
-     * @return Lookup name
-     */
     private static String lookupName(final Xnav alias) {
         final List<Xnav> parts = alias.elements(Filter.withName("part"))
             .collect(Collectors.toList());
         return parts.get(parts.size() - 1).text().get().substring(2);
     }
 
-    /**
-     * Create defect for incorrect alias.
-     * @param alias Alias navigator
-     * @param xmir Source XML
-     * @param pkg Package map
-     * @return Defect
-     */
     private static Defect aliasDefect(
         final Xnav alias, final XML xmir, final Map<String, XML> pkg
     ) {
