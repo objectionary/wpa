@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link PkWpa}.
+ *
  * @since 0.23
  */
 final class PkWpaTest {

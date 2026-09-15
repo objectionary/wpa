@@ -16,6 +16,7 @@ import org.hamcrest.Matchers;
 
 /**
  * Hamcrest matcher for defects in XML.
+ *
  * @since 0.0.34
  */
 public final class DefectsMatcher extends BaseMatcher<XML> {
@@ -24,6 +25,13 @@ public final class DefectsMatcher extends BaseMatcher<XML> {
      * Synthetic matcher that is built when input arrives.
      */
     private Matcher<Iterable<? extends Defect>> matcher;
+
+    /**
+     * Constructor.
+     */
+    public DefectsMatcher() {
+        // Nothing to initialize.
+    }
 
     @Override
     public boolean matches(final Object xml) {

@@ -14,6 +14,7 @@ import org.hamcrest.Matchers;
 
 /**
  * Hamcrest matcher for a single defect.
+ *
  * @since 0.0.34
  */
 public final class DefectMatcher extends BaseMatcher<Defect> {
@@ -21,7 +22,14 @@ public final class DefectMatcher extends BaseMatcher<Defect> {
     /**
      * Synthetic matcher that is built when input arrives.
      */
-    private final List<Matcher<?>> matchers = new ArrayList<>(0);
+    private final List<Matcher<?>> matchers;
+
+    /**
+     * Constructor.
+     */
+    public DefectMatcher() {
+        this.matchers = new ArrayList<>(0);
+    }
 
     @Override
     public boolean matches(final Object input) {

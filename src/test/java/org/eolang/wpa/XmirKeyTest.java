@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Tests for {@link XmirKey}.
+ *
  * @since 0.0.30
  */
 @ExtendWith(MktmpResolver.class)

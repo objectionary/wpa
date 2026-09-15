@@ -53,6 +53,7 @@ final class PkWpa implements Iterable<Lint> {
 
     /**
      * Ctor.
+     *
      * @param lints Lints
      * @param exld Excluded lint names
      */

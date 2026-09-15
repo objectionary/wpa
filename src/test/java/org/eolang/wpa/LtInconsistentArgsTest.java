@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Timeout;
 
 /**
  * Tests for {@link LtInconsistentArgs}.
+ *
  * @since 0.0.41
  */
 final class LtInconsistentArgsTest {

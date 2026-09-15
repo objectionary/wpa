@@ -9,6 +9,7 @@ import org.cactoos.list.ListOf;
 
 /**
  * WPA lints without lint names.
+ *
  * @since 0.0.46
  */
 final class WpaWithout extends IterableEnvelope<Lint> {
@@ -20,6 +21,7 @@ final class WpaWithout extends IterableEnvelope<Lint> {
 
     /**
      * Ctor.
+     *
      * @param names Lints to exclude
      */
     WpaWithout(final String... names) {

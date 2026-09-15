@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Top-level object extracted from a single XMIR source file.
+ *
  * @since 0.0.30
  */
 final class SourceObject {

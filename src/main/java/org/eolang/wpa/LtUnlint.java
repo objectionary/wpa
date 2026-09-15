@@ -11,11 +11,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.cactoos.list.ListOf;
 
 /**
  * Internal helper that applies {@code +unlint} meta filtering to a single
  * defect discovered in the given XMIR.
+ *
  * @since 0.0.1
  */
 final class LtUnlint {
@@ -32,6 +34,7 @@ final class LtUnlint {
 
     /**
      * Ctor.
+     *
      * @param dft The defect to filter
      */
     LtUnlint(final Defect dft) {
@@ -41,6 +44,7 @@ final class LtUnlint {
     /**
      * Return the defect unless it is suppressed by {@code +unlint} meta in the
      * given XMIR.
+     *
      * @param xmir The XMIR that owns the defect
      * @return Defects after filtering (zero or one)
      */
@@ -53,7 +57,7 @@ final class LtUnlint {
                 "/object/metas/meta[head='unlint' and (tail='%s' or starts-with(tail, '%s:'))]/tail",
                 lname, lname
             )
-        ).map(xnav -> xnav.text().get()).collect(java.util.stream.Collectors.toList());
+        ).map(xnav -> xnav.text().get()).collect(Collectors.toList());
         final boolean global = !granular.isEmpty();
         final AtomicBoolean added = new AtomicBoolean(false);
         granular.forEach(

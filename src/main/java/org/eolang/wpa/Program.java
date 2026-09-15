@@ -63,6 +63,7 @@ public final class Program {
 
     /**
      * Ctor.
+     *
      * @param dirs The directory
      * @throws IOException If fails
      */
@@ -85,6 +86,7 @@ public final class Program {
 
     /**
      * Ctor.
+     *
      * @param map The map with them
      */
     public Program(final Map<String, XML> map) {
@@ -108,6 +110,7 @@ public final class Program {
 
     /**
      * Program with disabled lints.
+     *
      * @param names Lint names
      * @return Program analysis without specifics names
      */
@@ -117,6 +120,7 @@ public final class Program {
 
     /**
      * Find all possible defects in the EO program.
+     *
      * @return All defects found
      * @see <a href="https://news.eolang.org/2022-11-25-xmir-guide.html">
      *  XMIR guide</a>

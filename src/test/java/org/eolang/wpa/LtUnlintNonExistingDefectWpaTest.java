@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link LtUnlintNonExistingDefectWpa}.
+ *
  * @since 0.0.42
  */
 final class LtUnlintNonExistingDefectWpaTest {

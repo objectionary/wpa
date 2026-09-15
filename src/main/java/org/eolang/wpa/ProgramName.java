@@ -13,6 +13,7 @@ import java.util.Optional;
  * Program name extractor from XMIR.
  * Compatible with eo-parser 0.60.0+ which may produce XMIR without
  * object elements when there are parsing errors.
+ *
  * @since 0.0.1
  */
 final class ProgramName {
@@ -24,6 +25,7 @@ final class ProgramName {
 
     /**
      * Ctor.
+     *
      * @param xml XML document
      */
     ProgramName(final XML xml) {
@@ -32,6 +34,7 @@ final class ProgramName {
 
     /**
      * Ctor.
+     *
      * @param nav Navigator
      */
     private ProgramName(final Xnav nav) {
@@ -40,6 +43,7 @@ final class ProgramName {
 
     /**
      * Get the program name.
+     *
      * @return Program name or "unknown" if not found
      */
     String get() {

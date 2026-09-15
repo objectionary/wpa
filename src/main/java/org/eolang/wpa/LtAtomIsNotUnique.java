@@ -24,6 +24,7 @@ import org.cactoos.text.UncheckedText;
  * All atom FQNs in the entire scope of EO program must be unique.
  * This lint firstly transforms the original XMIR into XMIR that contains `@fqn`
  * attributes for each atom `o`, and then lints it.
+ *
  * @since 0.0.31
  */
 final class LtAtomIsNotUnique implements Lint {
@@ -48,6 +49,7 @@ final class LtAtomIsNotUnique implements Lint {
 
     /**
      * Ctor.
+     *
      * @param sheet Sheet
      */
     LtAtomIsNotUnique(final XSL sheet) {

@@ -21,6 +21,7 @@ import org.cactoos.text.TextOf;
 
 /**
  * Lint for checking `+unlint` meta to suppress non-existing defects in WPA scope.
+ *
  * @since 0.0.42
  */
 final class LtUnlintNonExistingDefectWpa implements Lint {
@@ -44,6 +45,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     /**
      * Ctor.
+     *
      * @param lnts Lints
      */
     LtUnlintNonExistingDefectWpa(final Iterable<Lint> lnts) {
@@ -52,6 +54,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     /**
      * Ctor.
+     *
      * @param lnts Lints
      * @param exld Lint names to exclude
      */
@@ -63,6 +66,7 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
 
     /**
      * Ctor.
+     *
      * @param lnts Active lints used to find existing defects
      * @param scp Full canonical WPA scope for determining which rule names are WPA-managed
      * @param exld Lint names to exclude

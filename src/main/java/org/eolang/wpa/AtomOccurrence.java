@@ -9,6 +9,7 @@ import com.jcabi.xml.XMLDocument;
 
 /**
  * Single atom occurrence extracted from a transformed XMIR source.
+ *
  * @since 0.0.31
  */
 final class AtomOccurrence {
@@ -30,6 +31,7 @@ final class AtomOccurrence {
 
     /**
      * Ctor.
+     *
      * @param src Transformed XMIR source
      * @param fqn Fully qualified atom name
      * @param lno Line number
@@ -42,6 +44,7 @@ final class AtomOccurrence {
 
     /**
      * Fully qualified name of the atom.
+     *
      * @return FQN string
      */
     String fqn() {
@@ -50,6 +53,7 @@ final class AtomOccurrence {
 
     /**
      * Create a defect reporting this atom as a duplicate of another.
+     *
      * @param original The occurrence where the atom was originally defined
      * @return Defect
      */

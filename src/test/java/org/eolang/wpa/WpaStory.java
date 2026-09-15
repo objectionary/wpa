@@ -25,6 +25,7 @@ import org.yaml.snakeyaml.Yaml;
 
 /**
  * Test story for WPA.
+ *
  * @since 0.0.43
  */
 final class WpaStory {
@@ -41,6 +42,7 @@ final class WpaStory {
 
     /**
      * Ctor.
+     *
      * @param yml  Yaml to load
      * @param lnts Lints
      */
@@ -51,6 +53,7 @@ final class WpaStory {
 
     /**
      * Execute it.
+     *
      * @return Map of XPaths and found Defects as XML
      * @throws IOException if I/O fails
      */

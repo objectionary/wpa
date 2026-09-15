@@ -12,6 +12,7 @@ import org.cactoos.list.ListOf;
  * WPA lint names.
  * Caches the lint names collection statically to avoid repeated
  * expensive iteration over WpaLints during Program instantiation.
+ *
  * @since 0.0.43
  */
 final class WpaLintNames extends IterableEnvelope<String> {

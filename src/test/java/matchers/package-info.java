@@ -5,6 +5,7 @@
 
 /**
  * Hamcrest matchers for WPA tests.
+ *
  * @since 0.0.1
  */
 package matchers;

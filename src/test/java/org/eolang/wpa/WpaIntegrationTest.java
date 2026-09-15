@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Integration tests for {@link Program} with realistic multi-package directory structures.
+ *
  * @since 0.1.0
  */
 @ExtendWith(MktmpResolver.class)

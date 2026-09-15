@@ -13,6 +13,7 @@ import java.util.Map;
 
 /**
  * Lint that ignores linting if {@code +unlint} meta is present.
+ *
  * @since 0.0.1
  */
 final class LtWpaUnlint implements Lint {
@@ -24,6 +25,7 @@ final class LtWpaUnlint implements Lint {
 
     /**
      * Ctor.
+     *
      * @param lint The lint to decorate
      */
     LtWpaUnlint(final Lint lint) {

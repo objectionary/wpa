@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Timeout;
 
 /**
  * Tests for {@link LtAtomIsNotUnique}.
+ *
  * @since 0.0.31
  */
 final class LtAtomIsNotUniqueTest {

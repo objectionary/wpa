@@ -17,6 +17,7 @@ import org.cactoos.text.UncheckedText;
 
 /**
  * Object is not unique.
+ *
  * @since 0.0.30
  */
 final class LtObjectIsNotUnique implements Lint {

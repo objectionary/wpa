@@ -13,6 +13,7 @@ import org.hamcrest.Description;
 
 /**
  * Hamcrest matcher to check story of {@link org.eolang.wpa.WpaStory}.
+ *
  * @since 0.0.43
  */
 public final class WpaStoryMatcher
@@ -22,6 +23,13 @@ public final class WpaStoryMatcher
      * Summary.
      */
     private String summary;
+
+    /**
+     * Constructor.
+     */
+    public WpaStoryMatcher() {
+        // Nothing to initialize.
+    }
 
     @Override
     public boolean matches(final Object input) {

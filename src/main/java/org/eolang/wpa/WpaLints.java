@@ -9,6 +9,7 @@ import org.cactoos.list.ListOf;
 
 /**
  * WPA lints.
+ *
  * @since 0.0.43
  */
 final class WpaLints extends IterableEnvelope<Lint> {

@@ -22,6 +22,7 @@ import org.languagetool.rules.spelling.SpellingCheckRule;
 /**
  * Hamcrest matcher for a single piece of text, to make sure it's
  * grammatically valid.
+ *
  * @since 0.0.34
  */
 public final class GrammarMatcher extends BaseMatcher<String> {
@@ -35,6 +36,13 @@ public final class GrammarMatcher extends BaseMatcher<String> {
      * Errors.
      */
     private List<RuleMatch> errors;
+
+    /**
+     * Constructor.
+     */
+    public GrammarMatcher() {
+        // Nothing to initialize.
+    }
 
     @Override
     public boolean matches(final Object obj) {

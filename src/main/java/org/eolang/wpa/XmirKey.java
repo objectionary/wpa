@@ -10,6 +10,7 @@ import org.cactoos.Text;
 
 /**
  * Relative path to XMIR file.
+ *
  * @since 0.0.30
  */
 final class XmirKey implements Text {
@@ -31,6 +32,7 @@ final class XmirKey implements Text {
 
     /**
      * Ctor.
+     *
      * @param xmr Path to .xmir file
      * @param bse Base path
      */

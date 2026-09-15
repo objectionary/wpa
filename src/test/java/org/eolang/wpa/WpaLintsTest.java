@@ -26,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 /**
  * Tests for {@link WpaLints}.
+ *
  * @since 0.0.43
  */
 final class WpaLintsTest {

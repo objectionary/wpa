@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Timeout;
 
 /**
  * Tests for {@link LtObjectIsNotUnique}.
+ *
  * @since 0.0.30
  */
 final class LtObjectIsNotUniqueTest {

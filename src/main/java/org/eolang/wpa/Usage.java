@@ -6,6 +6,7 @@ package org.eolang.wpa;
 
 /**
  * One recorded usage of an object in a source file.
+ *
  * @since 0.0.41
  */
 final class Usage {
@@ -27,6 +28,7 @@ final class Usage {
 
     /**
      * Ctor.
+     *
      * @param pname Program name
      * @param lno Line number
      * @param argc Argument count
@@ -39,6 +41,7 @@ final class Usage {
 
     /**
      * Program name.
+     *
      * @return Name of the program
      */
     String program() {
@@ -47,6 +50,7 @@ final class Usage {
 
     /**
      * Line number.
+     *
      * @return Number of the line
      */
     int line() {
@@ -55,6 +59,7 @@ final class Usage {
 
     /**
      * Argument count.
+     *
      * @return Count of arguments
      */
     int args() {
@@ -63,6 +68,7 @@ final class Usage {
 
     /**
      * Short reference for use in clash messages.
+     *
      * @return Program name and line, colon-separated
      */
     String clashRef() {
@@ -71,6 +77,7 @@ final class Usage {
 
     /**
      * True if this usage is at the same source location as another.
+     *
      * @param other Other usage
      * @return True or False
      */

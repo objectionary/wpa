@@ -19,6 +19,7 @@ import org.cactoos.text.UncheckedText;
 
 /**
  * Checks that `+alias` is pointing to existing `.xmir` files.
+ *
  * @since 0.0.30
  */
 final class LtIncorrectAlias implements Lint {
