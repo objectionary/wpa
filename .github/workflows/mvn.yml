@@ -34,3 +34,14 @@ jobs:
           path: ~/.m2/repository/org/eolang
       - run: mvn clean install -PskipITs --errors --batch-mode
       - run: mvn test --errors --batch-mode
+  telegram:
+    needs: mvn
+    runs-on: ubuntu-24.04
+    if: ${{ always() && github.event_name == 'push' }}
+    permissions:
+      actions: read
+    steps:
+      - uses: yegor256/terald-action@a0ef862a24f962a4258fd9390d0a67b5529f0eef  # master
+        with:
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          chat: -1004371404002
