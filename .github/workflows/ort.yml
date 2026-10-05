@@ -12,6 +12,9 @@ name: ort
       - master
 env:
   RUN_WORKFLOW: false
+concurrency:
+  group: ort-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   ort:
     timeout-minutes: 15

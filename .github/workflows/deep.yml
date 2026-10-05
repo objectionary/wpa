@@ -10,6 +10,9 @@ name: deep
   pull_request:
     branches:
       - master
+concurrency:
+  group: deep-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   deep:
     timeout-minutes: 30

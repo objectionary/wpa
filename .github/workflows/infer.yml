@@ -7,6 +7,9 @@ name: infer
   push:
     branches:
       - master
+concurrency:
+  group: infer-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   infer:
     timeout-minutes: 15

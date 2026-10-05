@@ -9,6 +9,9 @@ name: jmh
       - master
 env:
   RUN_WORKFLOW: false
+concurrency:
+  group: jmh-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   jmh:
     timeout-minutes: 45

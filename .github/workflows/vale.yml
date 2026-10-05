@@ -3,6 +3,9 @@
 ---
 name: vale
 'on': [pull_request]
+concurrency:
+  group: vale-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   vale:
     runs-on: ubuntu-latest

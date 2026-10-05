@@ -7,6 +7,9 @@ name: pit
   push:
     branches:
       - master
+concurrency:
+  group: pit-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   pit:
     timeout-minutes: 90
