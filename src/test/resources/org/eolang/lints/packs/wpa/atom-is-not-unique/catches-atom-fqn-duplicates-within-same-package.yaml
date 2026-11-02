@@ -5,16 +5,20 @@ lints:
   - atom-is-not-unique
 asserts:
   - /defects[count(defect[@severity='error'])=2]
-  - /defects/defect[@object='xyz.app' and @line='5']
+  - /defects/defect[@object='xyz.app' and @line='6']
 foo-packaged.eo: |
+  # App.
+
   +package xyz
 
-  # App.
   [] > app
-    [] > foo ?
+    [] > foo /A
+      ? > ^
 bar-packaged.eo: |
+  # App.
+
   +package xyz
 
-  # App.
   [] > app
-    [] > foo ?
+    [] > foo /A
+      ? > ^

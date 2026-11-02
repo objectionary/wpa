@@ -7,6 +7,9 @@ asserts:
   - /defects[count(defect)=0]
 spb.eo: |
   # Spb.
+
   [attr] > app
-    [] > mow ?
-    [] > sfo ?
+    [] > mow /A
+      ? > ^
+    [] > sfo /A
+      ? > ^

@@ -5,12 +5,13 @@ lints:
   - inconsistent-args
 asserts:
   - /defects[count(defect[@severity='warning'])=2]
-  - /defects/defect[@line='6']
   - /defects/defect[@line='7']
-  - /defects/defect[contains(normalize-space(), 'clashes with [main:6]')]
+  - /defects/defect[@line='8']
   - /defects/defect[contains(normalize-space(), 'clashes with [main:7]')]
+  - /defects/defect[contains(normalize-space(), 'clashes with [main:8]')]
 main.eo: |
   # Main.
+
   [] > main
     x 1 > x1
     x 2 > x2

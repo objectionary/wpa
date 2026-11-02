@@ -71,6 +71,7 @@ final class LtInconsistentArgsTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Foo",
+                                "",
                                 "[] > foo",
                                 "  bar 42 > x",
                                 "  bar 1 2 3 > y"
@@ -95,6 +96,7 @@ final class LtInconsistentArgsTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# This is app",
+                                "",
                                 "[] > app",
                                 "  foo 42 > x",
                                 "  foo 52 > spb"
@@ -119,6 +121,7 @@ final class LtInconsistentArgsTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# App",
+                                "",
                                 "[] > app",
                                 "  f 42 > x"
                             )
@@ -130,6 +133,7 @@ final class LtInconsistentArgsTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Main",
+                                "",
                                 "[] > main",
                                 "  f 1 2 3 > y"
                             )
@@ -153,6 +157,7 @@ final class LtInconsistentArgsTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Fizz",
+                                "",
                                 "[] > fizz",
                                 "  f 42 > x"
                             )
@@ -164,6 +169,7 @@ final class LtInconsistentArgsTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Buzz",
+                                "",
                                 "[a] > main",
                                 "  f a > x"
                             )
@@ -187,6 +193,7 @@ final class LtInconsistentArgsTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# App",
+                                "",
                                 "[] > app",
                                 "  Q.org.eolang.txt.text \"f\" \"y\" > x"
                             )
@@ -197,8 +204,10 @@ final class LtInconsistentArgsTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
-                                "+alias org.eolang.txt.text",
                                 "# Main",
+                                "",
+                                "+alias org.eolang.txt.text",
+                                "",
                                 "[] > main",
                                 "  text \"f\" > y"
                             )

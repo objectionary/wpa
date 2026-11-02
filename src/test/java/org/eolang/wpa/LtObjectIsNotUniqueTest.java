@@ -36,13 +36,13 @@ final class LtObjectIsNotUniqueTest {
                     new MapEntry<>(
                         "foo",
                         new EoSyntax(
-                            String.join(System.lineSeparator(), "# Foo", "[] > foo")
+                            String.join(System.lineSeparator(), "# Foo", "", "[] > foo")
                         ).parsed()
                     ),
                     new MapEntry<>(
                         "bar-with-foo",
                         new EoSyntax(
-                            String.join(System.lineSeparator(), "# Bar", "[] > foo")
+                            String.join(System.lineSeparator(), "# Bar", "", "[] > foo")
                         ).parsed()
                     )
                 )
@@ -66,6 +66,7 @@ final class LtObjectIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# 42",
+                                "",
                                 "[] > c",
                                 "  42 > @"
                             )
@@ -77,6 +78,7 @@ final class LtObjectIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# 52",
+                                "",
                                 "[] > e",
                                 "  52 > @"
                             )
@@ -100,6 +102,7 @@ final class LtObjectIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Baz",
+                                "",
                                 "[] > baz"
                             )
                         ).parsed()
@@ -109,9 +112,10 @@ final class LtObjectIsNotUniqueTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# Baz",
+                                "",
                                 "+package utils",
                                 "",
-                                "# Baz",
                                 "[] > baz"
                             )
                         ).parsed()

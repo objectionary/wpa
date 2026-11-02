@@ -46,10 +46,11 @@ final class LtIncorrectAliasTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# Bar",
+                                "",
                                 "+alias foo",
                                 "+package ttt",
                                 "",
-                                "# Bar",
                                 "[] > bar",
                                 "  foo > @"
                             )
@@ -75,10 +76,11 @@ final class LtIncorrectAliasTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# Bar",
+                                "",
                                 "+alias foo",
                                 "+package ttt",
                                 "",
-                                "# Bar",
                                 "[] > bar",
                                 "  foo > @"
                             )
@@ -146,10 +148,11 @@ final class LtIncorrectAliasTest {
             new EoSyntax(
                 String.join(
                     System.lineSeparator(),
+                    "# Bar",
+                    "",
                     "+alias ttt.foo",
                     "+package ttt",
                     "",
-                    "# Bar",
                     "[] > bar",
                     "  foo > @"
                 )
@@ -201,10 +204,11 @@ final class LtIncorrectAliasTest {
             new EoSyntax(
                 String.join(
                     System.lineSeparator(),
+                    "# Main.",
+                    "",
                     "+alias stdout org.eolang.io.stdout",
                     "+package foo",
                     "",
-                    "# Main.",
                     "[] > main",
                     "  stdout \"hi\" > @"
                 )

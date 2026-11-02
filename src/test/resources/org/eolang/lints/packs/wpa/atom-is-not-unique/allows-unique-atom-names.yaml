@@ -7,9 +7,13 @@ asserts:
   - /defects[count(defect)=0]
 ax.eo: |
   # A + X.
+
   [attrs] > a
-    [] > x ?
+    [] > x /A
+      ? > ^
 ay.eo: |
   # A + Y.
+
   [attrs] > a
-    [] > y ?
+    [] > y /A
+      ? > ^

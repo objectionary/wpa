@@ -36,9 +36,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# Foo.",
+                                "",
                                 "+unlint object-is-not-unique",
                                 "",
-                                "# Foo.",
                                 "[] > foo"
                             )
                         ).parsed()
@@ -48,9 +49,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# Bar.",
+                                "",
                                 "+unlint object-is-not-unique",
                                 "",
-                                "# Bar.",
                                 "[] > foo"
                             )
                         ).parsed()
@@ -74,9 +76,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                     new EoSyntax(
                         String.join(
                             System.lineSeparator(),
+                            "# Bar",
+                            "",
                             "+unlint object-is-not-unique",
                             "",
-                            "# Bar",
                             "[] > bar"
                         )
                     ).parsed()
@@ -137,9 +140,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# E tests.",
+                                "",
                                 "+unlint unit-test-without-live-file",
                                 "",
-                                "# E tests.",
                                 "[] > f"
                             )
                         ).parsed()
@@ -164,9 +168,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                     new EoSyntax(
                         String.join(
                             System.lineSeparator(),
+                            "# Foo.",
+                            "",
                             "+unlint redundant-object",
                             "",
-                            "# Foo.",
                             "[] > foo"
                         )
                     ).parsed()
@@ -190,9 +195,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
-                                "+unlint inconsistent-args:6",
-                                "",
                                 "# Foo.",
+                                "",
+                                "+unlint inconsistent-args:7",
+                                "",
                                 "[] > foo",
                                 "  bar 42 > x",
                                 "  bar 42 52 > y"
@@ -219,9 +225,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
-                                "+unlint inconsistent-args:25",
-                                "",
                                 "# App.",
+                                "",
+                                "+unlint inconsistent-args:26",
+                                "",
                                 "[] > app",
                                 "  tee 42 > x",
                                 "  tee 42 52 > y"
@@ -247,9 +254,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                     new EoSyntax(
                         String.join(
                             System.lineSeparator(),
-                            "+unlint inconsistent-args:5-7",
-                            "",
                             "# Main.",
+                            "",
+                            "+unlint inconsistent-args:6-8",
+                            "",
                             "[] > main",
                             "  fork > parent",
                             "  fork parent > child",
@@ -275,9 +283,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                     new EoSyntax(
                         String.join(
                             System.lineSeparator(),
-                            "+unlint inconsistent-args:12-44",
-                            "",
                             "# Semaphore.",
+                            "",
+                            "+unlint inconsistent-args:13-45",
+                            "",
                             "[] > sem",
                             "  p 1 > lock-one",
                             "  p 1 1 > lock-more"
@@ -302,9 +311,10 @@ final class LtUnlintNonExistingDefectWpaTest {
                     new EoSyntax(
                         String.join(
                             System.lineSeparator(),
-                            "+unlint inconsistent-args:1-5",
-                            "",
                             "# Object that represents Jeffrey from a real world.",
+                            "",
+                            "+unlint inconsistent-args:2-6",
+                            "",
                             "[] > jeff",
                             "  send 0 > content",
                             "  send content \"boss@google.com\" > emailed",

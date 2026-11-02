@@ -34,15 +34,15 @@ final class WpaIntegrationTest {
         final Path iod = tmp.resolve("io");
         final Path txt = tmp.resolve("txt");
         final Path math = tmp.resolve("math");
-        this.file(iod, "input.xmir", "# Input.", "[size] > input");
-        this.file(iod, "output.xmir", "# Output.", "[data] > output");
-        this.file(iod, "reader.xmir", "# Reader.", "[source] > reader");
-        this.file(txt, "text.xmir", "# Text.", "[raw] > text");
-        this.file(txt, "lines.xmir", "# Lines.", "[content] > lines");
-        this.file(txt, "chars.xmir", "# Chars.", "[str] > chars");
-        this.file(math, "num.xmir", "# Num.", "[value] > num");
-        this.file(math, "add.xmir", "# Add.", "[left right] > add");
-        this.file(math, "max.xmir", "# Max.", "[first second] > max");
+        this.file(iod, "input.xmir", "# Input.", "", "[size] > input");
+        this.file(iod, "output.xmir", "# Output.", "", "[data] > output");
+        this.file(iod, "reader.xmir", "# Reader.", "", "[source] > reader");
+        this.file(txt, "text.xmir", "# Text.", "", "[raw] > text");
+        this.file(txt, "lines.xmir", "# Lines.", "", "[content] > lines");
+        this.file(txt, "chars.xmir", "# Chars.", "", "[str] > chars");
+        this.file(math, "num.xmir", "# Num.", "", "[value] > num");
+        this.file(math, "add.xmir", "# Add.", "", "[left right] > add");
+        this.file(math, "max.xmir", "# Max.", "", "[first second] > max");
         MatcherAssert.assertThat(
             "WPA analysis over multiple folders must produce valid defects only",
             new Program(iod, txt, math).defects(),
@@ -57,15 +57,15 @@ final class WpaIntegrationTest {
         final Path app = tmp.resolve("app");
         this.file(
             lib, "util.xmir",
-            "# Util.", "[] > util", "  helper 1 2 > result"
+            "# Util.", "", "[] > util", "  helper 1 2 > result"
         );
         this.file(
             lib, "core.xmir",
-            "# Core.", "[] > core", "  helper 1 2 3 > result"
+            "# Core.", "", "[] > core", "  helper 1 2 3 > result"
         );
         this.file(
             app, "main.xmir",
-            "# Main.", "[] > main", "  helper 42 > x"
+            "# Main.", "", "[] > main", "  helper 42 > x"
         );
         MatcherAssert.assertThat(
             "Inconsistent args across folders must be detected",
@@ -82,9 +82,9 @@ final class WpaIntegrationTest {
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
     void findsNoInconsistencyInConsistentPackage(@Mktmp final Path tmp) throws IOException {
         final Path pkg = tmp.resolve("consistent");
-        this.file(pkg, "foo.xmir", "# Foo.", "[a] > foo");
-        this.file(pkg, "bar.xmir", "# Bar.", "[] > bar", "  foo 1 > x");
-        this.file(pkg, "baz.xmir", "# Baz.", "[] > baz", "  foo 2 > y");
+        this.file(pkg, "foo.xmir", "# Foo.", "", "[a] > foo");
+        this.file(pkg, "bar.xmir", "# Bar.", "", "[] > bar", "  foo 1 > x");
+        this.file(pkg, "baz.xmir", "# Baz.", "", "[] > baz", "  foo 2 > y");
         MatcherAssert.assertThat(
             "Consistent package must produce no defects with fast lints",
             new Program(pkg).defects(),

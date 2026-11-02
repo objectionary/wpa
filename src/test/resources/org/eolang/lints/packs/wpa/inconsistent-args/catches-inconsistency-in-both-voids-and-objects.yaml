@@ -5,18 +5,19 @@ lints:
   - inconsistent-args
 asserts:
   - /defects[count(defect[@severity='warning'])=4]
-  - /defects/defect[@line='3']
   - /defects/defect[@line='4']
-  - /defects/defect[@line='6']
+  - /defects/defect[@line='5']
   - /defects/defect[@line='7']
+  - /defects/defect[@line='8']
   - /defects/defect[contains(normalize-space(), 'f.foo.ξ.x.∅')]
   - /defects/defect[contains(normalize-space(), 'f.ξ.x')]
-  - /defects/defect[contains(normalize-space(), 'clashes with [f:3]')]
   - /defects/defect[contains(normalize-space(), 'clashes with [f:4]')]
-  - /defects/defect[contains(normalize-space(), 'clashes with [f:6]')]
+  - /defects/defect[contains(normalize-space(), 'clashes with [f:5]')]
   - /defects/defect[contains(normalize-space(), 'clashes with [f:7]')]
+  - /defects/defect[contains(normalize-space(), 'clashes with [f:8]')]
 main.eo: |
   # F.
+
   [] > f
     x 1 > x1
     x 2 -1 > x2

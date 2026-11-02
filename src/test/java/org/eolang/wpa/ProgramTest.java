@@ -45,10 +45,11 @@ final class ProgramTest {
                     "a/b/c/first.xmir",
                     String.join(
                         System.lineSeparator(),
+                        "# First.",
+                        "",
                         "+package a.b.c",
                         "+alias ttt.x obj",
                         "",
-                        "# First.",
                         "[] > first"
                     )
                 )
@@ -70,10 +71,11 @@ final class ProgramTest {
                     "foo.xmir",
                     String.join(
                         System.lineSeparator(),
+                        "# Test.",
+                        "",
                         "+alias a.b.nowhere",
                         "+unlint incorrect-alias",
                         "",
-                        "# Test.",
                         "[] > foo"
                     )
                 )
@@ -92,8 +94,8 @@ final class ProgramTest {
                 System.lineSeparator(),
                 "# first.",
                 "# second.",
-                "[] > foo",
-                ""
+                "",
+                "[] > foo"
             )
         );
         MatcherAssert.assertThat(
@@ -125,12 +127,12 @@ final class ProgramTest {
                     "bar.xmir",
                     String.join(
                         System.lineSeparator(),
-                        "+alias x.y.ta",
-                        "",
                         "# first.",
                         "# second.",
-                        "[] > bar",
-                        ""
+                        "",
+                        "+alias x.y.ta",
+                        "",
+                        "[] > bar"
                     )
                 )
             ).without("incorrect-alias").defects().stream()
@@ -150,12 +152,12 @@ final class ProgramTest {
                     "bar.xmir",
                     String.join(
                         System.lineSeparator(),
-                        "+alias aaa.t",
-                        "",
                         "# first.",
                         "# second.",
-                        "[] > bar",
-                        ""
+                        "",
+                        "+alias aaa.t",
+                        "",
+                        "[] > bar"
                     )
                 ),
                 this.withSource(
@@ -164,6 +166,7 @@ final class ProgramTest {
                     String.join(
                         System.lineSeparator(),
                         "# Foo.",
+                        "",
                         "[] > foo",
                         "  x 2 52 > o",
                         "  x 1 > i"
@@ -222,9 +225,10 @@ final class ProgramTest {
                     new EoSyntax(
                         String.join(
                             System.lineSeparator(),
+                            "# F.",
+                            "",
                             "+unlint object-is-not-unique",
                             "",
-                            "# F.",
                             "[] > f"
                         )
                     ).parsed()
@@ -249,6 +253,7 @@ final class ProgramTest {
                             "+alias ttt.x",
                             System.lineSeparator(),
                             "# Foo",
+                            "",
                             "[] > foo"
                         )
                     ).parsed()

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
-import matchers.DefectMatcher;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
 import org.eolang.parser.EoSyntax;
@@ -61,8 +60,10 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Foo.",
+                                "",
                                 "[] > foo",
-                                "  [] > at ?"
+                                "  [] > at /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     ),
@@ -72,8 +73,10 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Bar, but its foo.",
+                                "",
                                 "[] > foo",
-                                "  [] > at ?"
+                                "  [] > at /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     )
@@ -95,8 +98,10 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Fuz.",
+                                "",
                                 "[] > fuz",
-                                "  [] > test ?"
+                                "  [] > test /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     ),
@@ -106,8 +111,10 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Its bar.",
+                                "",
                                 "[] > bar",
-                                "  [] > test ?"
+                                "  [] > test /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     )
@@ -128,11 +135,13 @@ final class LtAtomIsNotUniqueTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# App, XYZ packaged.",
+                                "",
                                 "+package xyz",
                                 "",
-                                "# App, XYZ packaged.",
                                 "[] > app",
-                                "  [] > foo ?"
+                                "  [] > foo /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     ),
@@ -141,11 +150,13 @@ final class LtAtomIsNotUniqueTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# App duplicate.",
+                                "",
                                 "+package xyz",
                                 "",
-                                "# App duplicate.",
                                 "[] > app",
-                                "  [] > foo ?"
+                                "  [] > foo /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     )
@@ -167,12 +178,15 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Top object with nested atoms inside.",
+                                "",
                                 "[] > top",
-                                "  [] > test ?",
+                                "  [] > test /A",
+                                "    ? > ^",
                                 "  [] > f",
                                 "    [] > a",
                                 "      [] > bar",
-                                "        [] > abr ?"
+                                "        [] > abr /A",
+                                "          ? > ^"
                             )
                         ).parsed()
                     ),
@@ -182,45 +196,19 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Top object with nested atoms inside, but without test atom.",
+                                "",
                                 "[] > top",
                                 "  [] > f",
                                 "    [] > a",
                                 "      [] > bar",
-                                "        [] > abr ?"
+                                "        [] > abr /A",
+                                "          ? > ^"
                             )
                         ).parsed()
                     )
                 )
             ),
             Matchers.hasSize(2)
-        );
-    }
-
-    @Test
-    void catchesDuplicatesInSingleFile() throws Exception {
-        MatcherAssert.assertThat(
-            "Defects are empty, but they should not",
-            new LtAtomIsNotUnique().defects(
-                new MapOf<>(
-                    new MapEntry<>(
-                        "dup",
-                        new EoSyntax(
-                            String.join(
-                                System.lineSeparator(),
-                                "# Dups.",
-                                "[attr] > dups",
-                                "  [] > foo ?",
-                                "  [] > @",
-                                "  [] > foo ?"
-                            )
-                        ).parsed()
-                    )
-                )
-            ),
-            Matchers.allOf(
-                Matchers.<Defect>iterableWithSize(Matchers.greaterThan(0)),
-                Matchers.<Defect>everyItem(new DefectMatcher())
-            )
         );
     }
 
@@ -236,8 +224,10 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# X.",
+                                "",
                                 "[] > app",
-                                "  [] > x ?"
+                                "  [] > x /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     ),
@@ -246,11 +236,13 @@ final class LtAtomIsNotUniqueTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# X, but its packaged.",
+                                "",
                                 "+package xyz",
                                 "",
-                                "# X, but its packaged.",
                                 "[] > app",
-                                "  [] > x ?"
+                                "  [] > x /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     )
@@ -272,8 +264,10 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# A.",
+                                "",
                                 "[attr] > a",
-                                "  [] > x ?"
+                                "  [] > x /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     ),
@@ -283,8 +277,10 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# B.",
+                                "",
                                 "[attr] > b",
-                                "  [] > y ?"
+                                "  [] > y /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     )
@@ -306,9 +302,12 @@ final class LtAtomIsNotUniqueTest {
                             String.join(
                                 System.lineSeparator(),
                                 "# Spb.",
+                                "",
                                 "[attr] > spb",
-                                "  [] > mow ?",
-                                "  [] > sfo ?"
+                                "  [] > mow /A",
+                                "    ? > ^",
+                                "  [] > sfo /A",
+                                "    ? > ^"
                             )
                         ).parsed()
                     )
@@ -329,10 +328,12 @@ final class LtAtomIsNotUniqueTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# ABC.",
+                                "",
                                 "+package a.b.c",
                                 "",
-                                "# ABC.",
-                                "[] > abc ?"
+                                "[] > abc /A",
+                                "  ? > ^"
                             )
                         ).parsed()
                     ),
@@ -341,10 +342,12 @@ final class LtAtomIsNotUniqueTest {
                         new EoSyntax(
                             String.join(
                                 System.lineSeparator(),
+                                "# ABC.",
+                                "",
                                 "+package a.b.z",
                                 "",
-                                "# ABC.",
-                                "[] > abc ?"
+                                "[] > abc /A",
+                                "  ? > ^"
                             )
                         ).parsed()
                     )

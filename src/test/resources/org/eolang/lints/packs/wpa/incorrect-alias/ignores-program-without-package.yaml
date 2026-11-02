@@ -6,8 +6,9 @@ lints:
 asserts:
   - /defects[count(defect)=0]
 foo.eo: |
+  # Bar.
+
   +alias foo
 
-  # Bar.
   [] > bar
     foo > @

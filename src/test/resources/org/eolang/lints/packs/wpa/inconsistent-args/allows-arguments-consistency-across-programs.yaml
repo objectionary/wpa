@@ -7,9 +7,11 @@ asserts:
   - /defects[count(defect)=0]
 fizz.eo: |
   # Fizz.
+
   [] > fizz
     f 42 > x
 buzz.eo: |
   # Buzz.
+
   [a] > buzz
     f a > y

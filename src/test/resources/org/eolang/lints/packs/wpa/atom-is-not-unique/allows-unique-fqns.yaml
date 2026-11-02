@@ -7,9 +7,13 @@ asserts:
   - /defects[count(defect)=0]
 fuz.eo: |
   # Fuz.
+
   [] > fuz
-    [] > test ?
+    [] > test /A
+      ? > ^
 buz.eo: |
   # Buz.
+
   [] > buz
-    [] > test ?
+    [] > test /A
+      ? > ^
