@@ -7,11 +7,13 @@ asserts:
   - /defects[count(defect)=0]
 mul.eo: |
   # Multiple objects here.
+
   [] > foo
     52 > inn
 baz-packaged.eo: |
+  # Multiple objects here.
+
   +package mul
 
-  # Multiple objects here.
   [] > foo
     52 > inn

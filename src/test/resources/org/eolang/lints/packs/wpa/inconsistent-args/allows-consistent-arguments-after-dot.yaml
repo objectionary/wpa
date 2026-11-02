@@ -7,6 +7,7 @@ asserts:
   - /defects[count(defect)=0]
 foo.eo: |
   # App.
+
   [] > app
     foo. > x
       52

@@ -7,9 +7,11 @@ asserts:
   - /defects[count(defect)=0]
 foo.eo: |
   # Foo.
+
   [a] > foo
 main.eo: |
   # Main.
+
   [] > main
     boom > @
       foo 1 > i

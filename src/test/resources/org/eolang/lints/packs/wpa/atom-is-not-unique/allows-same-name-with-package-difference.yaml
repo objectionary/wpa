@@ -6,12 +6,16 @@ lints:
 asserts:
   - /defects[count(defect)=0]
 abc.eo: |
+  # ABC.
+
   +package a.b.c
 
-  # ABC.
-  [] > abc ?
+  [] > abc /A
+    ? > ^
 bac.eo: |
+  # ABC.
+
   +package b.a.c
 
-  # ABC.
-  [] > abc ?
+  [] > abc /A
+    ? > ^

@@ -7,11 +7,15 @@ asserts:
   - /defects[count(defect)=0]
 x.eo: |
   # X.
+
   [] > app
-    [] > x ?
+    [] > x /A
+      ? > ^
 x-packaged.eo: |
+  # Packaged X.
+
   +package xyz
 
-  # Packaged X.
   [] > app
-    [] > x ?
+    [] > x /A
+      ? > ^

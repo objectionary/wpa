@@ -6,13 +6,15 @@ lints:
 asserts:
   - /defects[count(defect)=0]
 app.eo: |
+  # App.
+
   +alias stdout org.eolang.io.stdout
   +package foo
 
-  # App.
   [] > main
     stdout > @
       "hi!"
 org.eolang.io.stdout.eo: |
   # This is stdout.
+
   [] > f

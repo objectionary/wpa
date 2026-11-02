@@ -6,13 +6,14 @@ lints:
   - inconsistent-args
 asserts:
   - /defects[count(defect[@severity='warning'])=2]
-  - /defects/defect[@line='7']
   - /defects/defect[@line='8']
+  - /defects/defect[@line='9']
   - /defects/defect[contains(normalize-space(), 'foo.@.:anonymous.ξ.x.∅')]
-  - /defects/defect[contains(normalize-space(), 'clashes with [foo:7]')]
   - /defects/defect[contains(normalize-space(), 'clashes with [foo:8]')]
+  - /defects/defect[contains(normalize-space(), 'clashes with [foo:9]')]
 foo.eo: |
   # Foo.
+
   [x] > foo
     x 0 > x1
     x 1 > x2

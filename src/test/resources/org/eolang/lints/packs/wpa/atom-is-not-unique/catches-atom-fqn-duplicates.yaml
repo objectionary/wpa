@@ -6,13 +6,17 @@ lints:
   - atom-is-not-unique
 asserts:
   - /defects[count(defect[@severity='error'])=2]
-  - /defects/defect[@object='foo' and @line='3']
+  - /defects/defect[@object='foo' and @line='4']
   - /defects/defect[normalize-space()='Atom with FQN "Ф.foo.at" is duplicated, original was found in "foo"']
 foo.eo: |
   # Foo.
+
   [] > foo
-    [] > at ?
+    [] > at /A
+      ? > ^
 bar.eo: |
   # Bar, but its foo.
+
   [] > foo
-    [] > at ?
+    [] > at /A
+      ? > ^

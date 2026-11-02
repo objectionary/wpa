@@ -5,10 +5,11 @@ lints:
   - inconsistent-args
 asserts:
   - /defects[count(defect[@severity='warning'])=2]
-  - /defects/defect[@object='main' and @line='3']
-  - /defects/defect[@object='main' and @line='9']
+  - /defects/defect[@object='main' and @line='4']
+  - /defects/defect[@object='main' and @line='10']
 main.eo: |
   # Main.
+
   [] > main
     t. > x
       52

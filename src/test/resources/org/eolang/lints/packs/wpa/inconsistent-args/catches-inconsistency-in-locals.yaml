@@ -5,18 +5,18 @@ lints:
   - inconsistent-args
 asserts:
   - /defects[count(defect)=2]
-  - /defects/defect[@object='foo' and @line='4']
   - /defects/defect[@object='foo' and @line='5']
-  - /defects/defect[contains(normalize-space(), 'clashes with [foo:4]')]
+  - /defects/defect[@object='foo' and @line='6']
   - /defects/defect[contains(normalize-space(), 'clashes with [foo:5]')]
+  - /defects/defect[contains(normalize-space(), 'clashes with [foo:6]')]
 foo.eo: |
   # Foo.
+
   [as-bytes] > foo
     as-bytes > @
     times -1.as-i64.as-i32.as-i16 > neg
     times -2 -88 > aaa
 
-    # Times.
     [x] > times
       if. > @
         or.
