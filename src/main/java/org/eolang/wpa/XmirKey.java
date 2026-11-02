@@ -34,11 +34,11 @@ final class XmirKey implements Text {
      * Ctor.
      *
      * @param xmr Path to .xmir file
-     * @param bse Base path
+     * @param root Base path
      */
-    XmirKey(final Path xmr, final Path bse) {
+    XmirKey(final Path xmr, final Path root) {
         this.xmir = xmr;
-        this.base = bse;
+        this.base = root;
     }
 
     @Override
