@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: Copyright (c) 2016-2026 Objectionary.com
+# SPDX-License-Identifier: MIT
+---
+# Ubuntu 26.04 is available on GitHub-hosted runners but absent from
+# actionlint 1.7.12's built-in labels. Remove when upstream adds it.
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04
