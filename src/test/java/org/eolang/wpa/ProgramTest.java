@@ -4,6 +4,7 @@
  */
 package org.eolang.wpa;
 
+import com.jcabi.xml.XML;
 import com.yegor256.Mktmp;
 import com.yegor256.MktmpResolver;
 import com.yegor256.Together;
@@ -11,6 +12,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import matchers.DefectMatcher;
 import org.cactoos.list.ListOf;
@@ -34,6 +37,33 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 @ExtendWith(MktmpResolver.class)
 final class ProgramTest {
+
+    @Test
+    void keepsSourcesAfterCallerClearsMap() throws IOException {
+        final Map<String, XML> sources = new LinkedHashMap<>();
+        sources.put(
+            "original",
+            new EoSyntax(
+                String.join(
+                    System.lineSeparator(),
+                    "# Original.",
+                    "",
+                    "+alias missing.object",
+                    "",
+                    "[] > original"
+                )
+            ).parsed()
+        );
+        final Program program = new Program(sources);
+        sources.clear();
+        MatcherAssert.assertThat(
+            "The program lost its original source after the caller cleared the map",
+            program.defects(),
+            Matchers.hasItem(
+                Matchers.hasToString(Matchers.containsString("incorrect-alias/W CRITICAL"))
+            )
+        );
+    }
 
     @Test
     void checksSimple(@Mktmp final Path dir) throws IOException {
