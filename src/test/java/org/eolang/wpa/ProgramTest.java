@@ -35,6 +35,33 @@ import org.junit.jupiter.params.provider.ValueSource;
 @ExtendWith(MktmpResolver.class)
 final class ProgramTest {
 
+    @ParameterizedTest
+    @ValueSource(strings = {"README.md", "ignored.xml", "sample.xmir.bak"})
+    void ignoresUnrelatedFiles(final String name, @Mktmp final Path dir) throws IOException {
+        Files.writeString(dir.resolve(name), "This is not XML", StandardCharsets.UTF_8);
+        MatcherAssert.assertThat(
+            "The XMIR source was not analyzed alongside the unrelated file",
+            new Program(
+                this.withSource(
+                    dir,
+                    "nested/first.xmir",
+                    String.join(
+                        System.lineSeparator(),
+                        "# First.",
+                        "",
+                        "+package nested",
+                        "+alias missing.object",
+                        "",
+                        "[] > first"
+                    )
+                )
+            ).defects(),
+            Matchers.hasItem(
+                Matchers.hasToString(Matchers.containsString("incorrect-alias/W CRITICAL"))
+            )
+        );
+    }
+
     @Test
     void checksSimple(@Mktmp final Path dir) throws IOException {
         MatcherAssert.assertThat(
