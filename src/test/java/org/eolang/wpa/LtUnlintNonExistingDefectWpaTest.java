@@ -326,4 +326,47 @@ final class LtUnlintNonExistingDefectWpaTest {
             Matchers.iterableWithSize(1)
         );
     }
+
+    @Test
+    void catchesCorrectlyWithMultipleFiles() throws IOException {
+        MatcherAssert.assertThat(
+            "Defects must match with expected ones",
+            new LtUnlintNonExistingDefectWpa(
+                new ListOf<>(new LtIncorrectAlias())
+            ).defects(
+                new MapOf<String, XML>(
+                    new MapEntry<>(
+                        "foo",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# Foo.",
+                                "",
+                                "+unlint incorrect-alias:4-4",
+                                "+alias Q.missing",
+                                "",
+                                "[] > foo"
+                            )
+                        ).parsed()
+                    ),
+                    new MapEntry<>(
+                        "bar",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# Bar.",
+                                "",
+                                "+alias Q.missing",
+                                "[] > bar"
+                            )
+                        ).parsed()
+                    )
+                )
+            ),
+            Matchers.allOf(
+                Matchers.iterableWithSize(1),
+                Matchers.hasToString(Matchers.containsString("[bar incorrect-alias CRITICAL]:3"))
+            )
+        );
+    }
 }
