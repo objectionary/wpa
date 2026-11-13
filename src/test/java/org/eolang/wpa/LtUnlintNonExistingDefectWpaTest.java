@@ -328,9 +328,9 @@ final class LtUnlintNonExistingDefectWpaTest {
     }
 
     @Test
-    void catchesCorrectlyWithMultipleFiles() throws IOException {
+    void allowsValidUnlintRangeWithSameRuleDefectInAnotherSource() throws IOException {
         MatcherAssert.assertThat(
-            "Defects must match with expected ones",
+            "It must have no defects",
             new LtUnlintNonExistingDefectWpa(
                 new ListOf<>(new LtIncorrectAlias())
             ).defects(
@@ -363,10 +363,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                     )
                 )
             ),
-            Matchers.allOf(
-                Matchers.iterableWithSize(1),
-                Matchers.hasToString(Matchers.containsString("[bar incorrect-alias CRITICAL]:3"))
-            )
+            Matchers.emptyIterable()
         );
     }
 }
