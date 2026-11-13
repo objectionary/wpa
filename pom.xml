@@ -214,6 +214,18 @@
   </dependencies>
   <profiles>
     <profile>
+      <id>site</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>3.6.1</version>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
+    <profile>
       <id>sonatype</id>
       <build>
         <plugins>
