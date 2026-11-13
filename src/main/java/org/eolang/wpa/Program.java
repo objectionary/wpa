@@ -167,10 +167,12 @@ public final class Program {
                     final Path file, final BasicFileAttributes attrs
                 ) {
                     try {
-                        map.put(
-                            new XmirKey(file, dir).asString(),
-                            new XMLDocument(file)
-                        );
+                        if (file.getFileName().toString().endsWith(".xmir")) {
+                            map.put(
+                                new XmirKey(file, dir).asString(),
+                                new XMLDocument(file)
+                            );
+                        }
                     } catch (final FileNotFoundException ex) {
                         throw new IllegalArgumentException(ex);
                     }
