@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.cactoos.iterable.Sticky;
 import org.cactoos.list.ListOf;
@@ -104,7 +105,7 @@ public final class Program {
      * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     Program(final Map<String, XML> map, final Iterable<Lint> list) {
-        this.pkg = Collections.unmodifiableMap(map);
+        this.pkg = Collections.unmodifiableMap(new LinkedHashMap<>(map));
         this.lints = list;
     }
 
@@ -167,10 +168,12 @@ public final class Program {
                     final Path file, final BasicFileAttributes attrs
                 ) {
                     try {
-                        map.put(
-                            new XmirKey(file, dir).asString(),
-                            new XMLDocument(file)
-                        );
+                        if (file.getFileName().toString().endsWith(".xmir")) {
+                            map.put(
+                                new XmirKey(file, dir).asString(),
+                                new XMLDocument(file)
+                            );
+                        }
                     } catch (final FileNotFoundException ex) {
                         throw new IllegalArgumentException(ex);
                     }
