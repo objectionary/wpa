@@ -109,12 +109,16 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
     }
 
     private Collection<Defect> packageDefects(
-        final Map<String, XML> pkg, final Map<String, List<Integer>> existing,
+        final Map<String, XML> pkg, final Map<String, Map<String, List<Integer>>> existing,
         final Set<String> wpanames
     ) {
-        return pkg.values().stream()
-            .flatMap(xmir -> this.sourceDefects(xmir, existing, wpanames).stream())
-            .collect(Collectors.toList());
+        return pkg.values().stream().flatMap(
+            xmir -> this.sourceDefects(
+                xmir,
+                existing.getOrDefault(new ProgramName(xmir).get(), Map.of()),
+                wpanames
+            ).stream()
+        ).collect(Collectors.toList());
     }
 
     private Collection<Defect> sourceDefects(
@@ -145,12 +149,15 @@ final class LtUnlintNonExistingDefectWpa implements Lint {
             ).collect(Collectors.toList());
     }
 
-    private Map<String, List<Integer>> existingDefects(final Map<String, XML> pkg) {
+    private Map<String, Map<String, List<Integer>>> existingDefects(final Map<String, XML> pkg) {
         return StreamSupport.stream(this.lints.spliterator(), false)
             .flatMap(wpl -> LtUnlintNonExistingDefectWpa.defectStream(wpl, pkg)).collect(
                 Collectors.groupingBy(
-                    Defect::rule,
-                    Collectors.mapping(Defect::line, Collectors.toList())
+                    Defect::object,
+                    Collectors.groupingBy(
+                        Defect::rule,
+                        Collectors.mapping(Defect::line, Collectors.toList())
+                    )
                 )
             );
     }

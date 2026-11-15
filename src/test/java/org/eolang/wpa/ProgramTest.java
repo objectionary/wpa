@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import matchers.DefectMatcher;
 import org.cactoos.list.ListOf;
+import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
 import org.cactoos.set.SetOf;
 import org.eolang.parser.EoSyntax;
@@ -320,6 +321,47 @@ final class ProgramTest {
                 Matchers.hasToString(
                     Matchers.containsString("incorrect-alias/W CRITICAL")
                 )
+            )
+        );
+    }
+
+    @Test
+    void suppressesOnlyOwningSourcesDefectWithValidUnlintRange() throws IOException {
+        MatcherAssert.assertThat(
+            "Defects don't match with expected",
+            new Program(
+                new MapOf<String, XML>(
+                    new MapEntry<>(
+                        "foo",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# Foo.",
+                                "",
+                                "+unlint incorrect-alias:4-4",
+                                "+alias Q.missing",
+                                "",
+                                "[] > foo"
+                            )
+                        ).parsed()
+                    ),
+                    new MapEntry<>(
+                        "bar",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# Bar.",
+                                "",
+                                "+alias Q.missing",
+                                "[] > bar"
+                            )
+                        ).parsed()
+                    )
+                )
+            ).defects(),
+            Matchers.allOf(
+                Matchers.iterableWithSize(1),
+                Matchers.hasToString(Matchers.containsString("[bar incorrect-alias/W CRITICAL]:3"))
             )
         );
     }
