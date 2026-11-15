@@ -326,4 +326,44 @@ final class LtUnlintNonExistingDefectWpaTest {
             Matchers.iterableWithSize(1)
         );
     }
+
+    @Test
+    void allowsValidUnlintRangeWithSameRuleDefectInAnotherSource() throws IOException {
+        MatcherAssert.assertThat(
+            "It must have no defects",
+            new LtUnlintNonExistingDefectWpa(
+                new ListOf<>(new LtIncorrectAlias())
+            ).defects(
+                new MapOf<String, XML>(
+                    new MapEntry<>(
+                        "foo",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# Foo.",
+                                "",
+                                "+unlint incorrect-alias:4-4",
+                                "+alias Q.missing",
+                                "",
+                                "[] > foo"
+                            )
+                        ).parsed()
+                    ),
+                    new MapEntry<>(
+                        "bar",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# Bar.",
+                                "",
+                                "+alias Q.missing",
+                                "[] > bar"
+                            )
+                        ).parsed()
+                    )
+                )
+            ),
+            Matchers.emptyIterable()
+        );
+    }
 }
