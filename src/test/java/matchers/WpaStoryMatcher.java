@@ -38,9 +38,12 @@ public final class WpaStoryMatcher
             @SuppressWarnings("unchecked")
             final Map<List<String>, Map<XML, Map<String, XML>>> story =
                 (Map<List<String>, Map<XML, Map<String, XML>>>) input;
-            final List<String> xpaths = story.keySet().iterator().next();
-            final Map<XML, Map<String, XML>> out = story.get(xpaths);
-            final XML defects = out.keySet().iterator().next();
+            final Map.Entry<List<String>, Map<XML, Map<String, XML>>> entry =
+                story.entrySet().iterator().next();
+            final List<String> xpaths = entry.getKey();
+            final Map.Entry<XML, Map<String, XML>> out =
+                entry.getValue().entrySet().iterator().next();
+            final XML defects = out.getKey();
             final List<String> failures = new ArrayList<>(0);
             xpaths.forEach(
                 xpath -> {
@@ -60,7 +63,7 @@ public final class WpaStoryMatcher
                 );
                 sum.append(String.format("%n%nFound defects:%n")).append(defects)
                     .append(String.format("%nParsed objects:%n"));
-                out.get(defects).forEach(
+                out.getValue().forEach(
                     (object, xmir) -> sum.append(object).append(System.lineSeparator()).append(xmir)
                 );
                 this.summary = sum.toString();
