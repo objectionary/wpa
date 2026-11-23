@@ -1,8 +1,8 @@
 # `+unlint` of non-existing defect
 
-The special `+unlint` meta should be used only to suppress existing defects.
+Use the `+unlint` meta to suppress a defect the linter would otherwise report.
 
-Incorrect (since there are no duplicate metas):
+Incorrect (the file contains no duplicate metas):
 
 ```eo
 +unlint duplicate-metas

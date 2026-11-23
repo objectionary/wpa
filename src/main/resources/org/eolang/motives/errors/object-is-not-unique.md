@@ -1,6 +1,6 @@
-# Object isn't unique
+# Duplicate object name
 
-High-level object names must be unique across the package.
+Use a unique name for each top-level object in a package.
 
 Incorrect:
 

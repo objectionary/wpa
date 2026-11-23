@@ -14,4 +14,4 @@ Incorrect:
   foo > @
 ```
 
-Since the `ttt/foo.xmir` file doesn't exist, a `critical` defect will be issued.
+The analyzer reports a `critical` defect because `ttt/foo.xmir` doesn't exist.

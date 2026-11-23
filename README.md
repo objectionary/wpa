@@ -9,10 +9,9 @@
 [![Javadoc](https://www.javadoc.io/badge/org.eolang/wpa.svg)](https://www.javadoc.io/doc/org.eolang/wpa)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/objectionary/wpa/blob/master/LICENSE.txt)
 
-This Java package is a collection of whole-program analyzers
-(a.k.a. WPA lints) for [XMIR] — an intermediate representation of
-[EO] objects. WPA lints analyze a set of XMIR files together,
-rather than one file at a time.
+This Java package provides whole-program lints for [XMIR], an intermediate
+representation of [EO] objects. These lints analyze a set of XMIR files
+together rather than one file at a time.
 
 Single-file lints live in a separate package,
 [`org.eolang:lints`](https://github.com/objectionary/lints),
@@ -54,10 +53,9 @@ meta in your XMIR source.
 
 ## Design of This Library
 
-The library is designed as a set of `Lint<Map<String, XML>>`
-implementations. The `Program` class is the public entry point —
-it discovers `.xmir` files in a directory, runs all WPA lints, and
-returns the collected defects.
+The library provides a set of `Lint<Map<String, XML>>` implementations.
+Use the `Program` class to find `.xmir` files in a directory, run all
+whole-program lints, and collect their defects.
 
 Classes exposed to users of the library:
 
@@ -68,8 +66,8 @@ Classes exposed to users of the library:
 ## How to Contribute
 
 Fork the repository, make changes, and send us a pull request.
-We will review your changes and apply them to the `master` branch
-shortly, provided they don't violate our quality standards.
+We review your changes and merge them into the `master` branch if they
+meet our quality standards.
 To avoid frustration, before sending us your pull request please
 run a full Maven build:
 
