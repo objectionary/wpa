@@ -218,4 +218,40 @@ final class LtInconsistentArgsTest {
             Matchers.hasSize(2)
         );
     }
+
+    @Test
+    void ignoresTerminatorWithDifferentArguments() throws IOException {
+        MatcherAssert.assertThat(
+            "Terminator must not be checked for arguments consistency",
+            new LtInconsistentArgs().defects(
+                new MapOf<String, XML>(
+                    new MapEntry<>(
+                        "first",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# First",
+                                "",
+                                "[] > first",
+                                "  T \"oops\" > x"
+                            )
+                        ).parsed()
+                    ),
+                    new MapEntry<>(
+                        "second",
+                        new EoSyntax(
+                            String.join(
+                                System.lineSeparator(),
+                                "# Second",
+                                "",
+                                "[] > second",
+                                "  T \"oops\" 42 > y"
+                            )
+                        ).parsed()
+                    )
+                )
+            ),
+            Matchers.emptyIterable()
+        );
+    }
 }
