@@ -69,6 +69,8 @@ final class LtInconsistentArgs implements Lint {
             final String program = new ProgramName(xml).get();
             source.path("//o[@base]").filter(
                 obj -> !LtInconsistentArgs.objectReference(obj)
+            ).filter(
+                obj -> !LtInconsistentArgs.methodCall(obj)
             ).forEach(
                 obj -> {
                     final String base =
@@ -133,6 +135,11 @@ final class LtInconsistentArgs implements Lint {
         final Optional<String> base = object.attribute("base").text();
         return object.attribute("name").text().isEmpty() && base.isPresent()
             && base.get().startsWith("ξ.");
+    }
+
+    private static boolean methodCall(final Xnav object) {
+        return object.attribute("base").text()
+            .filter(base -> base.startsWith(".")).isPresent();
     }
 
     private static boolean voidAttribute(final String base, final Xnav object) {
