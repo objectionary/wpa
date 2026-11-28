@@ -52,7 +52,7 @@ final class WpaIntegrationTest {
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    void detectsInconsistentArgsAcrossFolders(@Mktmp final Path tmp) throws IOException {
+    void acceptsPartialApplicationAcrossFolders(@Mktmp final Path tmp) throws IOException {
         final Path lib = tmp.resolve("lib");
         final Path app = tmp.resolve("app");
         this.file(
@@ -68,13 +68,9 @@ final class WpaIntegrationTest {
             "# Main.", "", "[] > main", "  helper 42 > x"
         );
         MatcherAssert.assertThat(
-            "Inconsistent args across folders must be detected",
+            "Partial application across folders must not be reported",
             new Program(lib, app).defects(),
-            Matchers.hasItem(
-                Matchers.hasToString(
-                    Matchers.containsString("inconsistent-args")
-                )
-            )
+            Matchers.emptyIterable()
         );
     }
 

@@ -230,7 +230,7 @@ final class ProgramTest {
                         "  x 1 > i"
                     )
                 )
-            ).without("incorrect-alias", "inconsistent-args").defects(),
+            ).without("incorrect-alias", "object-is-not-unique").defects(),
             Matchers.emptyIterable()
         );
     }
