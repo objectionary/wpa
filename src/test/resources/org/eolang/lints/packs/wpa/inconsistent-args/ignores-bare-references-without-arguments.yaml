@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: Copyright (c) 2016-2026 Objectionary.com
+# SPDX-License-Identifier: MIT
+---
+lints:
+  - inconsistent-args
+asserts:
+  - /defects[count(defect[@severity='warning'])=0]
+file.eo: |
+  # File.
+
+  [] > file
+    posix.open > open
+directory.eo: |
+  # Directory.
+
+  [] > directory
+    posix.open "x" 1 > handle

@@ -24,6 +24,10 @@ import org.w3c.dom.Node;
 /**
  * Lint for checking arguments' inconsistency provided to the objects.
  *
+ * <p>Usages without arguments are left out, since a bare reference
+ * is not an application, and leaving trailing voids unbound is
+ * valid partial application in EO.</p>
+ *
  * @since 0.0.41
  */
 final class LtInconsistentArgs implements Lint {
@@ -71,6 +75,8 @@ final class LtInconsistentArgs implements Lint {
                 obj -> !LtInconsistentArgs.objectReference(obj)
             ).filter(
                 obj -> !LtInconsistentArgs.methodCall(obj)
+            ).filter(
+                obj -> obj.node().hasChildNodes()
             ).forEach(
                 obj -> {
                     final String base =

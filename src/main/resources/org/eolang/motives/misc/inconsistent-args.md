@@ -2,6 +2,8 @@
 
 Objects with the same `@base` must have the same number of arguments passed
 to them.
+A bare reference without arguments, like `bar > z`, is not an application,
+so it never clashes with any other usage.
 
 Incorrect:
 

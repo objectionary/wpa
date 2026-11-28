@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: Copyright (c) 2016-2026 Objectionary.com
+# SPDX-License-Identifier: MIT
+---
+lints:
+  - inconsistent-args
+asserts:
+  - /defects[count(defect[@severity='warning'])=0]
+minimum.eo: |
+  # Minimum.
+
+  [] > minimum
+    tuple.empty.minimum > x
+    tuple.empty.minimum > y
+      42

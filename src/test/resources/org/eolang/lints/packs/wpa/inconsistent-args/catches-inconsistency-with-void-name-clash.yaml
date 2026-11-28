@@ -14,7 +14,7 @@ main.eo: |
 
   [] > main
     start > @
-      x > a
+      x 7 8 > a
       x 12 > b
       [x] > foo
         x 1 > @
