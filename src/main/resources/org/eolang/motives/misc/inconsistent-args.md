@@ -4,6 +4,7 @@ Objects with the same `@base` must have the same number of arguments passed
 to them.
 A bare reference without arguments, like `bar > z`, never clashes
 with other usages, since EO permits partial binding of voids.
+The terminator `T` is never checked, since it has no voids.
 
 Incorrect:
 

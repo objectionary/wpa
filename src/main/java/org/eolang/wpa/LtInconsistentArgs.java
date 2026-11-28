@@ -28,6 +28,9 @@ import org.w3c.dom.Node;
  * is not an application, and leaving trailing voids unbound is
  * valid partial application in EO.</p>
  *
+ * <p>The terminator {@code T} is left out too, since it has no voids
+ * and takes any number of arguments, such as an error message.</p>
+ *
  * @since 0.0.41
  */
 final class LtInconsistentArgs implements Lint {
@@ -75,6 +78,8 @@ final class LtInconsistentArgs implements Lint {
                 obj -> !LtInconsistentArgs.objectReference(obj)
             ).filter(
                 obj -> !LtInconsistentArgs.methodCall(obj)
+            ).filter(
+                obj -> !LtInconsistentArgs.terminator(obj)
             ).filter(
                 obj -> obj.node().hasChildNodes()
             ).forEach(
@@ -146,6 +151,11 @@ final class LtInconsistentArgs implements Lint {
     private static boolean methodCall(final Xnav object) {
         return object.attribute("base").text()
             .filter(base -> base.startsWith(".")).isPresent();
+    }
+
+    private static boolean terminator(final Xnav object) {
+        return object.attribute("base").text()
+            .filter("⊥"::equals).isPresent();
     }
 
     private static boolean voidAttribute(final String base, final Xnav object) {
