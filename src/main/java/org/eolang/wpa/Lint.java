@@ -28,6 +28,7 @@ public interface Lint {
      *
      * @param pkg The XMIR sources to analyze, keyed by program name
      * @return Defects
+     * @throws IOException If something went wrong
      */
     Collection<Defect> defects(Map<String, XML> pkg) throws IOException;
 
