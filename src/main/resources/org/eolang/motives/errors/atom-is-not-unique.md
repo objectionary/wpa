@@ -1,6 +1,6 @@
-# Atom isn't unique
+# Duplicate atom name
 
-Atom fully qualified names (FQNs) must be unique across all `.eo` files.
+Use a unique fully qualified name (FQN) for each atom across all `.eo` files.
 
 Incorrect:
 
