@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
 import org.eolang.parser.EoSyntax;
 import org.hamcrest.MatcherAssert;
@@ -54,24 +55,17 @@ final class LtWpaUnlintTest {
     void returnsDefectsWithoutUnlints() throws IOException {
         MatcherAssert.assertThat(
             "Returned defect does not match with expected",
-            new LtWpaUnlint(new LtInconsistentArgs()).defects(
-                new MapOf<>(
-                    "foo",
-                    new EoSyntax(
-                        String.join(
-                            System.lineSeparator(),
-                            "[] > foo",
-                            "  x 1 > x1",
-                            "  x 1 2 > x2"
-                        )
-                    ).parsed()
+            new LtWpaUnlint(new LtObjectIsNotUnique()).defects(
+                new MapOf<String, XML>(
+                    new MapEntry<>("foo", new EoSyntax("[] > foo").parsed()),
+                    new MapEntry<>("bar", new EoSyntax("[] > foo").parsed())
                 )
             ),
             Matchers.allOf(
                 Matchers.hasSize(2),
                 Matchers.hasToString(
                     Matchers.containsString(
-                        "[foo inconsistent-args WARNING]"
+                        "[foo object-is-not-unique ERROR]"
                     )
                 )
             )

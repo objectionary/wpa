@@ -4,9 +4,13 @@
  */
 package org.eolang.wpa;
 
+import com.github.lombrozo.xnav.Xnav;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.cactoos.list.ListOf;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
@@ -186,7 +190,7 @@ final class LtUnlintNonExistingDefectWpaTest {
         MatcherAssert.assertThat(
             "An existing defect should be able to be unlinted with line number",
             new LtUnlintNonExistingDefectWpa(
-                new ListOf<>(new LtInconsistentArgs()),
+                new ListOf<>(new LtUnlintNonExistingDefectWpaTest.LtEveryLine()),
                 new ListOf<>()
             ).defects(
                 new MapOf<>(
@@ -197,7 +201,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                                 System.lineSeparator(),
                                 "# Foo.",
                                 "",
-                                "+unlint inconsistent-args:7",
+                                "+unlint every-line:7",
                                 "",
                                 "[] > foo",
                                 "  bar 42 > x",
@@ -216,7 +220,7 @@ final class LtUnlintNonExistingDefectWpaTest {
         MatcherAssert.assertThat(
             "Non existing defect with line number should be reported",
             new LtUnlintNonExistingDefectWpa(
-                new ListOf<>(new LtInconsistentArgs()),
+                new ListOf<>(new LtUnlintNonExistingDefectWpaTest.LtEveryLine()),
                 new ListOf<>()
             ).defects(
                 new MapOf<>(
@@ -227,7 +231,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                                 System.lineSeparator(),
                                 "# App.",
                                 "",
-                                "+unlint inconsistent-args:26",
+                                "+unlint every-line:26",
                                 "",
                                 "[] > app",
                                 "  tee 42 > x",
@@ -246,7 +250,7 @@ final class LtUnlintNonExistingDefectWpaTest {
         MatcherAssert.assertThat(
             "Defects are not empty, but they should",
             new LtUnlintNonExistingDefectWpa(
-                new ListOf<>(new LtInconsistentArgs()),
+                new ListOf<>(new LtUnlintNonExistingDefectWpaTest.LtEveryLine()),
                 new ListOf<>()
             ).defects(
                 new MapOf<>(
@@ -256,7 +260,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                             System.lineSeparator(),
                             "# Main.",
                             "",
-                            "+unlint inconsistent-args:6-8",
+                            "+unlint every-line:6-8",
                             "",
                             "[] > main",
                             "  fork > parent",
@@ -275,7 +279,7 @@ final class LtUnlintNonExistingDefectWpaTest {
         MatcherAssert.assertThat(
             "Defects are empty, but they should not",
             new LtUnlintNonExistingDefectWpa(
-                new ListOf<>(new LtInconsistentArgs()),
+                new ListOf<>(new LtUnlintNonExistingDefectWpaTest.LtEveryLine()),
                 new ListOf<>()
             ).defects(
                 new MapOf<>(
@@ -285,7 +289,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                             System.lineSeparator(),
                             "# Semaphore.",
                             "",
-                            "+unlint inconsistent-args:13-45",
+                            "+unlint every-line:13-45",
                             "",
                             "[] > sem",
                             "  p 1 > lock-one",
@@ -303,7 +307,7 @@ final class LtUnlintNonExistingDefectWpaTest {
         MatcherAssert.assertThat(
             "Defects are empty, but they should not",
             new LtUnlintNonExistingDefectWpa(
-                new ListOf<>(new LtInconsistentArgs()),
+                new ListOf<>(new LtUnlintNonExistingDefectWpaTest.LtEveryLine()),
                 new ListOf<>()
             ).defects(
                 new MapOf<>(
@@ -313,7 +317,7 @@ final class LtUnlintNonExistingDefectWpaTest {
                             System.lineSeparator(),
                             "# Object that represents Jeffrey from a real world.",
                             "",
-                            "+unlint inconsistent-args:2-6",
+                            "+unlint every-line:2-6",
                             "",
                             "[] > jeff",
                             "  send 0 > content",
@@ -365,5 +369,38 @@ final class LtUnlintNonExistingDefectWpaTest {
             ),
             Matchers.emptyIterable()
         );
+    }
+
+    /**
+     * Lint that complains on every line with an object that has a base.
+     *
+     * @since 0.1.0
+     */
+    private static final class LtEveryLine implements Lint {
+
+        @Override
+        public String name() {
+            return "every-line";
+        }
+
+        @Override
+        public Collection<Defect> defects(final Map<String, XML> pkg) {
+            return pkg.values().stream().flatMap(
+                xmir -> new Xnav(xmir.inner()).path("//o[@base and @line]").map(
+                    obj -> new Defect.Default(
+                        this.name(),
+                        Severity.WARNING,
+                        new ProgramName(xmir).get(),
+                        Integer.parseInt(obj.attribute("line").text().get()),
+                        "Every line is a defect"
+                    )
+                )
+            ).collect(Collectors.toList());
+        }
+
+        @Override
+        public String motive() {
+            return "nothing";
+        }
     }
 }
