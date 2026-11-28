@@ -23,7 +23,7 @@ Add it to your project:
 <dependency>
   <groupId>org.eolang</groupId>
   <artifactId>wpa</artifactId>
-  <version></version>
+  <version>0.1.2</version>
 </dependency>
 ```
 
